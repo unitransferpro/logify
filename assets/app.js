@@ -81,6 +81,21 @@
     }
   }
 
+  /* ---- roadmap timeline: draw the progress line + light nodes ---- */
+  var tl = document.querySelector('.timeline');
+  if (tl) {
+    if (reduce || !('IntersectionObserver' in window)) {
+      tl.classList.add('lit');
+    } else {
+      var tlio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('lit'); tlio.unobserve(e.target); }
+        });
+      }, { threshold: 0.3 });
+      tlio.observe(tl);
+    }
+  }
+
   /* ============================================================
      HERO — the "gap finder"
      A drifting field of market-signal dots. A reticle sweeps to
@@ -92,6 +107,7 @@
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var W = 0, H = 0, dots = [], gap = null, gapPrev = null, gapNext = null;
     var morph = 1, lastSwap = 0, INK = '13,15,20', BLUE = '59,91,219';
+    var mx = 0.5, my = 0.5, tmx = 0.5, tmy = 0.5;
 
     function resize() {
       W = canvas.clientWidth; H = canvas.clientHeight;
@@ -109,6 +125,7 @@
           vx: (Math.random() - 0.5) * 0.18, vy: (Math.random() - 0.5) * 0.18,
           r: Math.random() * 1.7 + 1.1,
           blue: Math.random() < 0.16,
+          depth: Math.random() * 0.7 + 0.35,
           ph: Math.random() * Math.PI * 2
         });
       }
@@ -138,6 +155,9 @@
 
     function draw(now) {
       ctx.clearRect(0, 0, W, H);
+      mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;
+      var offx = (mx - 0.5) * 26, offy = (my - 0.5) * 20;
+
       // swap the gap target every ~4.6s with an eased morph
       if (!lastSwap) lastSwap = now;
       if (now - lastSwap > 4600 && morph >= 1) {
@@ -149,25 +169,50 @@
         var e = 1 - Math.pow(1 - morph, 3);
         gap = lerpRect(gapPrev, gapNext, e);
       }
+      var rgap = { x: gap.x + offx * 0.4, y: gap.y + offy * 0.4, w: gap.w, h: gap.h };
+      var cx0 = rgap.x + rgap.w / 2, cy0 = rgap.y + rgap.h / 2;
 
-      // dots
+      // scan beam sweeping down the field
+      var beamY = ((now * 0.045) % (H + 200)) - 100;
+      var bg = ctx.createLinearGradient(0, beamY - 70, 0, beamY + 70);
+      bg.addColorStop(0, 'rgba(59,91,219,0)');
+      bg.addColorStop(0.5, 'rgba(59,91,219,0.05)');
+      bg.addColorStop(1, 'rgba(59,91,219,0)');
+      ctx.fillStyle = bg; ctx.fillRect(0, beamY - 70, W, 140);
+      ctx.strokeStyle = 'rgba(59,91,219,0.14)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, beamY); ctx.lineTo(W, beamY); ctx.stroke();
+
+      // signal dots (with subtle pointer parallax + beam highlight)
+      var near = [];
       for (var i = 0; i < dots.length; i++) {
         var d = dots[i];
         d.x += d.vx; d.y += d.vy;
         if (d.x < -6) d.x = W + 6; if (d.x > W + 6) d.x = -6;
         if (d.y < -6) d.y = H + 6; if (d.y > H + 6) d.y = -6;
-        // fade dots that sit inside the gap so the void stays visible
-        var fade = inRect(d.x, d.y, d.r, -12) ? 0.06 : 1;
+        var px = d.x + offx * d.depth, py = d.y + offy * d.depth;
+        var fade = inRect(px, py, rgap, -12) ? 0.06 : 1;
+        var beamBoost = Math.max(0, 1 - Math.abs(py - beamY) / 55);
         var tw = 0.55 + 0.45 * Math.sin(d.ph + now * 0.001);
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + (d.blue ? BLUE : INK) + ',' +
-          ((d.blue ? 0.5 : 0.22) * tw * fade).toFixed(3) + ')';
+        var a = (d.blue ? 0.5 : 0.22) * tw * fade + beamBoost * 0.35 * fade;
+        ctx.beginPath(); ctx.arc(px, py, d.r + beamBoost * 0.9, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + (d.blue ? BLUE : INK) + ',' + a.toFixed(3) + ')';
         ctx.fill();
+        if (fade === 1) {
+          var dist = Math.hypot(px - cx0, py - cy0);
+          if (dist < 220) near.push([px, py, dist]);
+        }
       }
 
-      // reticle brackets around the gap
-      drawReticle(gap, now);
+      // connector lines: nearest signals point at the detected gap
+      near.sort(function (a, b) { return a[2] - b[2]; });
+      for (var k = 0; k < Math.min(5, near.length); k++) {
+        var n = near[k], al = (1 - n[2] / 220) * 0.2;
+        ctx.beginPath(); ctx.moveTo(n[0], n[1]); ctx.lineTo(cx0, cy0);
+        ctx.strokeStyle = 'rgba(59,91,219,' + al.toFixed(3) + ')';
+        ctx.lineWidth = 1; ctx.stroke();
+      }
+
+      drawReticle(rgap, now);
       requestAnimationFrame(draw);
     }
 
@@ -206,7 +251,7 @@
       ctx.clearRect(0, 0, W, H);
       for (var i = 0; i < dots.length; i++) {
         var d = dots[i];
-        var fade = inRect(d.x, d.y, d.r, -12) ? 0.06 : 1;
+        var fade = inRect(d.x, d.y, gap, -12) ? 0.06 : 1;
         ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(' + (d.blue ? BLUE : INK) + ',' + ((d.blue ? 0.5 : 0.2) * fade) + ')';
         ctx.fill();
@@ -218,6 +263,12 @@
     window.addEventListener('resize', function () {
       clearTimeout(canvas._rt); canvas._rt = setTimeout(resize, 180);
     });
+    if (!reduce) {
+      window.addEventListener('pointermove', function (ev) {
+        var rect = canvas.getBoundingClientRect();
+        if (rect.height) { tmx = (ev.clientX - rect.left) / rect.width; tmy = (ev.clientY - rect.top) / rect.height; }
+      }, { passive: true });
+    }
     if (reduce) staticFrame(); else requestAnimationFrame(draw);
   }
 
