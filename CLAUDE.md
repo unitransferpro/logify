@@ -10,8 +10,7 @@
 로기파이의 **회사 랜딩 사이트**입니다. 앱이 아니라 웹사이트입니다.
 
 - **저장소:** `unitransferpro/logify` (GitHub, **public**)
-- **라이브:** https://unitransferpro.github.io/logify/
-- **목표 도메인:** `logify.co.kr` — 도메인은 보유(가비아 등록), DNS 연결 작업 진행 중. 4번 항목 참고
+- **라이브:** https://logify.co.kr (옛 주소 `unitransferpro.github.io/logify/` 는 301 리다이렉트)
 - **브랜드:** Logify / 로기파이 / "시장의 빈틈을 찾아 앱으로 메웁니다" / 잉크 `#0d0f14` + 블루 `#3b5bdb` + 펄 배경 `#eef1f8`
 
 ### 이 사이트가 앞으로 할 두 가지 역할
@@ -109,28 +108,26 @@ fetch(url + '?t=' + Date.now(), {cache:'reload'})
 
 ---
 
-## 4. 도메인 (`logify.co.kr`)
+## 4. 도메인 (`logify.co.kr`) — 연결 완료
 
-`index.html` 의 schema.org JSON-LD 는 이미 `https://logify.co.kr` 를 가리키는데, 실제 Pages 에는 아직 CNAME 이 없습니다.
-도메인은 보유하고 있고, 연결 방식은 아래로 정해졌습니다.
-
-**현재 상태 (2026-07-28 기준)**
+**2026-07-28 연결 완료.** 이제 손댈 일이 거의 없습니다. 아래는 구성 기록입니다.
 
 - 등록기관 · DNS: **가비아** (네임서버 `ns.gabia.net` 등)
-- 존에 `google-site-verification` TXT 레코드만 있고, A 레코드 · www CNAME 은 없음
-- 저장소에 `CNAME` 파일 없음 → 라이브는 `unitransferpro.github.io/logify/`
+- A 레코드 4개: `@` → `185.199.108.153` / `.109.153` / `.110.153` / `.111.153` (GitHub Pages)
+- `www` CNAME → `unitransferpro.github.io.` (`www` 는 apex 로 301)
+- `google-site-verification` TXT 레코드 (구글 서치콘솔) — **지우지 마세요**
+- 저장소 루트 `CNAME` 파일 (내용 `logify.co.kr`) — GitHub 이 자동 생성. **지우지 마세요.** 지우면 커스텀 도메인이 풀립니다.
+- HTTPS: Pages `https_enforced=true`. 인증서는 GitHub 이 무료 발급 · 자동 갱신 (손댈 것 없음)
 
-**연결 방법 (가비아 A 레코드 방식)**
+상태 확인:
 
-1. 가비아 DNS 설정에 A 레코드 4개(`@` → `185.199.108.153` / `.109.153` / `.110.153` / `.111.153`) + `www` CNAME(`unitransferpro.github.io.`) 추가. **이건 사용자가 직접 합니다.**
-2. GitHub 쪽 등록: `gh api -X PUT repos/unitransferpro/logify/pages -f cname=logify.co.kr -F https_enforced=true`
-   (GitHub 이 `main` 에 `CNAME` 파일을 자동 커밋하므로, 실행 후 반드시 `git pull`)
-3. 전파 후 Pages 의 **Enforce HTTPS** 확인. 인증서는 GitHub 이 무료 발급 · 자동 갱신.
-4. 확인: `gh api repos/unitransferpro/logify/pages --jq '{cname,status,https_enforced}'`
+```bash
+gh api repos/unitransferpro/logify/pages --jq '{cname,status,https_enforced,html_url}'
+```
 
 **주의**
 
-- 도메인 · DNS · Pages 설정 변경은 **전부 사용자 확인 후** 실행하세요. 임의로 `CNAME` 파일을 추가하지 마세요.
+- 도메인 · DNS · Pages 설정 변경은 **전부 사용자 확인 후** 실행하세요.
 - 주소가 `/logify/` 에서 루트 `/` 로 바뀌지만, 내부 링크가 전부 상대 경로라 안 깨집니다. **새 페이지도 절대 경로(`/assets/...`)가 아니라 상대 경로로 쓰세요.**
 - `www` CNAME 은 GitHub 을 가리킵니다. 나중에 저장소를 삭제 · 비공개 전환하거나 Custom domain 을 해제하면 **DNS 레코드도 같이 지우세요.** 방치하면 서브도메인 탈취 위험이 있습니다.
 - 나중에 관리자 콘솔 백엔드(`api.logify.co.kr` 같은 Worker)가 필요해지면 네임서버만 Cloudflare 로 옮기면 됩니다. 레코드가 같으면 다운타임 없이 전환되고, 등록기관은 `.co.kr` 이라 가비아에 그대로 남습니다. **그 필요가 생기기 전에 미리 옮기지 마세요.**
