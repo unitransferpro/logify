@@ -304,7 +304,7 @@
         '',
         g('message')
       ].join('\n');
-      window.location.href = 'mailto:minjoon@logify.co.kr?subject=' +
+      window.location.href = 'mailto:service@logify.co.kr?subject=' +
         encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
       if (ok) { ok.classList.add('show'); ok.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
       form.reset();
