@@ -14,9 +14,19 @@
   setTimeout(function () { document.body.classList.add('loaded'); }, 1200);
 
   /* ---- nav: scrolled state + mobile sheet ---- */
+  /* 히어로 카피는 본문 패널이 덮어 올라오는 만큼 같이 사라집니다. */
   var nav = document.querySelector('.nav');
-  if (nav) {
-    var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 12); };
+  var heroCopy = document.querySelector('.hero-sky .container');
+  if (nav || heroCopy) {
+    var onScroll = function () {
+      var y = window.scrollY;
+      if (nav) nav.classList.toggle('scrolled', y > 12);
+      if (heroCopy) {
+        var k = Math.min(1, y / (window.innerHeight * 0.5));
+        heroCopy.style.opacity = String(1 - k);
+        heroCopy.style.transform = 'translateY(' + (-k * 26).toFixed(1) + 'px)';
+      }
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
   }
@@ -97,179 +107,224 @@
   }
 
   /* ============================================================
-     HERO — the "gap finder"
-     A drifting field of market-signal dots. A reticle sweeps to
-     the emptiest region and locks onto it: find the gap.
+     HERO — 하루의 빛
+     해와 달이 하나의 타원 궤도를 정반대 지점에서 함께 돕니다.
+     하늘색은 12개 시간대 사이를 오가고, 화면 아래쪽은 다음 섹션
+     배경색으로 녹아들어 히어로와 본문 사이 경계선을 없앱니다.
      ============================================================ */
-  var canvas = document.getElementById('gapfield');
-  if (canvas && canvas.getContext) {
-    var ctx = canvas.getContext('2d');
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var W = 0, H = 0, dots = [], gap = null, gapPrev = null, gapNext = null;
-    var morph = 1, lastSwap = 0, INK = '13,15,20', BLUE = '59,91,219';
-    var mx = 0.5, my = 0.5, tmx = 0.5, tmy = 0.5;
+  var sky = document.getElementById('skyfield');
+  if (sky && sky.getContext) {
+    var sctx = sky.getContext('2d');
+    var sdpr = Math.min(window.devicePixelRatio || 1, 2);
+    var SW = 0, SH = 0, sframe = 0, tod = 7.4;      // tod: 0~24 시각
+    var DAY_SEC = 90;                                // 하루 한 바퀴에 걸리는 시간
+    var GROUND = [11, 13, 19];                       // .page-body 위쪽이 얹히는 어두운 색
 
-    function resize() {
-      W = canvas.clientWidth; H = canvas.clientHeight;
-      canvas.width = W * dpr; canvas.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      buildDots();
+    var SKY_KEYS = [
+      [0.0,  '#050813', '#080c1c', '#0d1428'],
+      [4.2,  '#070c1c', '#101830', '#233052'],
+      [5.6,  '#152040', '#3a3560', '#8a5568'],
+      [6.6,  '#20406e', '#6a5a86', '#e0895e'],
+      [8.0,  '#1d4f8c', '#4f86bd', '#c9c3ba'],
+      [12.0, '#14559f', '#3f8ed2', '#a8d2ee'],
+      [16.0, '#1a5395', '#4a86c4', '#c6d8e4'],
+      [18.0, '#2b4a86', '#8a6a86', '#e8a05e'],
+      [18.9, '#233a70', '#8a4f68', '#d9663f'],
+      [20.0, '#101a3c', '#2e2a56', '#5a3552'],
+      [21.5, '#070c1c', '#101830', '#1c2340'],
+      [24.0, '#050813', '#080c1c', '#0d1428']
+    ];
+    function hx(c) {
+      return [parseInt(c.substr(1, 2), 16), parseInt(c.substr(3, 2), 16), parseInt(c.substr(5, 2), 16)];
     }
-    function buildDots() {
-      var area = W * H;
-      var count = Math.min(120, Math.max(46, Math.round(area / 12000)));
-      dots = [];
-      for (var i = 0; i < count; i++) {
-        dots.push({
-          x: Math.random() * W, y: Math.random() * H,
-          vx: (Math.random() - 0.5) * 0.18, vy: (Math.random() - 0.5) * 0.18,
-          r: Math.random() * 1.7 + 1.1,
-          blue: Math.random() < 0.16,
-          depth: Math.random() * 0.7 + 0.35,
-          ph: Math.random() * Math.PI * 2
-        });
-      }
-      if (!gap) { gap = pickGap(); gapNext = gap; }
+    function mixc(a, b, k) {
+      return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
     }
-    function pickGap() {
-      // keep the reticle in the open right-hand region so it never
-      // collides with the left-aligned hero copy
-      var narrow = W < 760;
-      var gw = Math.max(140, Math.min(W * (narrow ? 0.34 : 0.17), 250));
-      var gh = Math.max(108, Math.min(H * 0.26, 190));
-      var xMin = narrow ? W * 0.28 : W * 0.56;
-      var xMax = W - gw - 18;
-      var x = xMin + Math.random() * Math.max(0, xMax - xMin);
-      var y = H * (0.30 + Math.random() * 0.30) - gh / 2;
-      x = Math.max(16, Math.min(xMax, x));
-      y = Math.max(70, Math.min(H - gh - 24, y));
-      return { x: x, y: y, w: gw, h: gh };
+    function rgba(c, a) {
+      return 'rgba(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ',' + a + ')';
     }
-    function lerpRect(a, b, t) {
-      return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t,
-               w: a.w + (b.w - a.w) * t, h: a.h + (b.h - a.h) * t };
+    function smooth(k) { return k * k * (3 - 2 * k); }
+    function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+    for (var ki = 0; ki < SKY_KEYS.length; ki++) {
+      SKY_KEYS[ki][4] = hx(SKY_KEYS[ki][1]);
+      SKY_KEYS[ki][5] = hx(SKY_KEYS[ki][2]);
+      SKY_KEYS[ki][6] = hx(SKY_KEYS[ki][3]);
     }
-    function inRect(px, py, r, pad) {
-      return px > r.x - pad && px < r.x + r.w + pad && py > r.y - pad && py < r.y + r.h + pad;
+    function palette(t) {
+      var i = 0;
+      while (i < SKY_KEYS.length - 2 && SKY_KEYS[i + 1][0] <= t) i++;
+      var k = smooth((t - SKY_KEYS[i][0]) / (SKY_KEYS[i + 1][0] - SKY_KEYS[i][0]));
+      return {
+        a: mixc(SKY_KEYS[i][4], SKY_KEYS[i + 1][4], k),
+        b: mixc(SKY_KEYS[i][5], SKY_KEYS[i + 1][5], k),
+        c: mixc(SKY_KEYS[i][6], SKY_KEYS[i + 1][6], k)
+      };
+    }
+    var SUN_LOW = hx('#ff9a4d'), SUN_HIGH = hx('#fff6dc');
+    var HALO_LOW = hx('#ff7a33'), HALO_HIGH = hx('#ffe9b8');
+    var WARM_AM = hx('#ffb26b'), WARM_PM = hx('#ff8a4a');
+    var CLOUD_DAY = hx('#ffffff'), CLOUD_DUSK = hx('#ffd0a0');
+
+    var stars = [], clouds = [], si;
+    for (si = 0; si < 140; si++) {
+      stars.push({ x: Math.random(), y: Math.random() * 0.62, r: Math.random() * 1.1 + 0.35,
+                   ph: Math.random() * Math.PI * 2, sp: 0.6 + Math.random() * 1.6 });
+    }
+    for (si = 0; si < 5; si++) {
+      clouds.push({ x: Math.random(), y: 0.14 + Math.random() * 0.34, w: 0.24 + Math.random() * 0.30,
+                    h: 0.026 + Math.random() * 0.04, sp: 0.000045 + Math.random() * 0.00008,
+                    a: 0.07 + Math.random() * 0.09 });
     }
 
-    function draw(now) {
-      ctx.clearRect(0, 0, W, H);
-      mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;
-      var offx = (mx - 0.5) * 26, offy = (my - 0.5) * 20;
+    function skyResize() {
+      SW = sky.clientWidth; SH = sky.clientHeight;
+      sky.width = SW * sdpr; sky.height = SH * sdpr;
+      sctx.setTransform(sdpr, 0, 0, sdpr, 0, 0);
+      paintSky();
+    }
 
-      // swap the gap target every ~4.6s with an eased morph
-      if (!lastSwap) lastSwap = now;
-      if (now - lastSwap > 4600 && morph >= 1) {
-        gapPrev = { x: gap.x, y: gap.y, w: gap.w, h: gap.h };
-        gapNext = pickGap(); morph = 0; lastSwap = now;
-      }
-      if (morph < 1) {
-        morph = Math.min(1, morph + 0.012);
-        var e = 1 - Math.pow(1 - morph, 3);
-        gap = lerpRect(gapPrev, gapNext, e);
-      }
-      var rgap = { x: gap.x + offx * 0.4, y: gap.y + offy * 0.4, w: gap.w, h: gap.h };
-      var cx0 = rgap.x + rgap.w / 2, cy0 = rgap.y + rgap.h / 2;
+    function paintSky() {
+      var w = SW, h = SH, pal = palette(tod), i;
+      var horizon = h * 0.86;
 
-      // scan beam sweeping down the field
-      var beamY = ((now * 0.045) % (H + 200)) - 100;
-      var bg = ctx.createLinearGradient(0, beamY - 70, 0, beamY + 70);
-      bg.addColorStop(0, 'rgba(59,91,219,0)');
-      bg.addColorStop(0.5, 'rgba(59,91,219,0.05)');
-      bg.addColorStop(1, 'rgba(59,91,219,0)');
-      ctx.fillStyle = bg; ctx.fillRect(0, beamY - 70, W, 140);
-      ctx.strokeStyle = 'rgba(59,91,219,0.14)'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, beamY); ctx.lineTo(W, beamY); ctx.stroke();
+      var g = sctx.createLinearGradient(0, 0, 0, horizon);
+      g.addColorStop(0, rgba(pal.a, 1));
+      g.addColorStop(0.55, rgba(pal.b, 1));
+      g.addColorStop(1, rgba(pal.c, 1));
+      sctx.fillStyle = g; sctx.fillRect(0, 0, w, h);
 
-      // signal dots (with subtle pointer parallax + beam highlight)
-      var near = [];
-      for (var i = 0; i < dots.length; i++) {
-        var d = dots[i];
-        d.x += d.vx; d.y += d.vy;
-        if (d.x < -6) d.x = W + 6; if (d.x > W + 6) d.x = -6;
-        if (d.y < -6) d.y = H + 6; if (d.y > H + 6) d.y = -6;
-        var px = d.x + offx * d.depth, py = d.y + offy * d.depth;
-        var fade = inRect(px, py, rgap, -12) ? 0.06 : 1;
-        var beamBoost = Math.max(0, 1 - Math.abs(py - beamY) / 55);
-        var tw = 0.55 + 0.45 * Math.sin(d.ph + now * 0.001);
-        var a = (d.blue ? 0.5 : 0.22) * tw * fade + beamBoost * 0.35 * fade;
-        ctx.beginPath(); ctx.arc(px, py, d.r + beamBoost * 0.9, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + (d.blue ? BLUE : INK) + ',' + a.toFixed(3) + ')';
-        ctx.fill();
-        if (fade === 1) {
-          var dist = Math.hypot(px - cx0, py - cy0);
-          if (dist < 220) near.push([px, py, dist]);
+      // 해와 달: 같은 궤도의 정반대 지점. 문장을 피해 오른쪽에 둡니다.
+      var th = Math.PI * (tod - 6) / 12;
+      // 넓은 화면: 오른쪽 여백을 도는 큰 궤도.
+      // 좁은 화면: 문장 위쪽만 지나는 얕은 궤도 (글씨를 가리지 않게).
+      var narrow = w < 760;
+      var cx = w * (narrow ? 0.50 : 0.82);
+      var rx = w * (narrow ? 0.36 : 0.16);
+      var ry = h * (narrow ? 0.30 : 0.78);
+      var cy = narrow ? h * 0.34 : horizon;
+      var sunX = cx - Math.cos(th) * rx, sunY = cy - Math.sin(th) * ry, sunAlt = Math.sin(th);
+      var moonX = cx + Math.cos(th) * rx, moonY = cy + Math.sin(th) * ry, moonAlt = -sunAlt;
+      var night = clamp((-sunAlt - 0.06) * 3.0, 0, 1);
+      var dusk = clamp(1 - Math.abs(sunAlt) * 3.4, 0, 1);
+
+      if (night > 0.02) {
+        for (i = 0; i < stars.length; i++) {
+          var st = stars[i];
+          var tw = 0.55 + 0.45 * Math.sin(sframe * 0.02 * st.sp + st.ph);
+          sctx.beginPath();
+          sctx.fillStyle = 'rgba(255,252,240,' + (night * tw * 0.85) + ')';
+          sctx.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2); sctx.fill();
         }
       }
 
-      // connector lines: nearest signals point at the detected gap
-      near.sort(function (a, b) { return a[2] - b[2]; });
-      for (var k = 0; k < Math.min(5, near.length); k++) {
-        var n = near[k], al = (1 - n[2] / 220) * 0.2;
-        ctx.beginPath(); ctx.moveTo(n[0], n[1]); ctx.lineTo(cx0, cy0);
-        ctx.strokeStyle = 'rgba(59,91,219,' + al.toFixed(3) + ')';
-        ctx.lineWidth = 1; ctx.stroke();
+      if (moonAlt > 0.01) {
+        var mA = clamp(moonAlt * 4.5, 0, 1);
+        var low = 1 - clamp(moonAlt * 3.2, 0, 1);
+        var mCore = mixc([255, 255, 250], [255, 214, 164], low * 0.85);
+        var mRim = mixc([206, 216, 240], [242, 190, 142], low * 0.80);
+        var solid = clamp(0.55 + 0.55 * mA, 0, 1);
+
+        var mg = sctx.createRadialGradient(moonX, moonY, 14, moonX, moonY, 86);
+        mg.addColorStop(0, rgba(mCore, 0.20 * mA));
+        mg.addColorStop(0.34, rgba(mCore, 0.07 * mA));
+        mg.addColorStop(1, rgba(mCore, 0));
+        sctx.fillStyle = mg;
+        sctx.beginPath(); sctx.arc(moonX, moonY, 86, 0, Math.PI * 2); sctx.fill();
+
+        var md = sctx.createRadialGradient(moonX - 6, moonY - 7, 2, moonX, moonY, 22);
+        md.addColorStop(0, rgba(mCore, solid));
+        md.addColorStop(1, rgba(mRim, 0.94 * solid));
+        sctx.fillStyle = md;
+        sctx.beginPath(); sctx.arc(moonX, moonY, 22, 0, Math.PI * 2); sctx.fill();
+
+        var crater = (1 - low) * solid * 0.34;
+        if (crater > 0.02) {
+          sctx.fillStyle = rgba([168, 180, 212], crater);
+          sctx.beginPath(); sctx.arc(moonX - 6, moonY - 4, 4.6, 0, Math.PI * 2); sctx.fill();
+          sctx.beginPath(); sctx.arc(moonX + 5, moonY + 5, 3.2, 0, Math.PI * 2); sctx.fill();
+          sctx.beginPath(); sctx.arc(moonX + 2, moonY - 8, 2.4, 0, Math.PI * 2); sctx.fill();
+        }
       }
 
-      drawReticle(rgap, now);
-      requestAnimationFrame(draw);
-    }
+      if (sunAlt > -0.10) {
+        var sA = clamp((sunAlt + 0.10) * 5.0, 0, 1);
+        var core = mixc(SUN_LOW, SUN_HIGH, clamp(sunAlt * 1.6, 0, 1));
+        var halo = mixc(HALO_LOW, HALO_HIGH, clamp(sunAlt * 1.4, 0, 1));
 
-    function drawReticle(r, now) {
-      var len = 22, off = 0, pulse = 0.6 + 0.4 * Math.sin(now * 0.003);
-      ctx.strokeStyle = 'rgba(' + BLUE + ',' + (0.85).toFixed(2) + ')';
-      ctx.lineWidth = 2; ctx.lineCap = 'round';
-      var corners = [
-        [r.x, r.y, 1, 1], [r.x + r.w, r.y, -1, 1],
-        [r.x, r.y + r.h, 1, -1], [r.x + r.w, r.y + r.h, -1, -1]
-      ];
-      corners.forEach(function (c) {
-        ctx.beginPath();
-        ctx.moveTo(c[0] + c[2] * off, c[1] + c[3] * (off + len));
-        ctx.lineTo(c[0] + c[2] * off, c[1] + c[3] * off);
-        ctx.lineTo(c[0] + c[2] * (off + len), c[1] + c[3] * off);
-        ctx.stroke();
-      });
-      // soft fill + crosshair centre
-      ctx.fillStyle = 'rgba(' + BLUE + ',0.05)';
-      ctx.fillRect(r.x, r.y, r.w, r.h);
-      var cx = r.x + r.w / 2, cy = r.y + r.h / 2;
-      ctx.beginPath(); ctx.arc(cx, cy, 3.2 * pulse + 1.5, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(' + BLUE + ',' + (0.9 * pulse).toFixed(2) + ')'; ctx.fill();
-      ctx.beginPath(); ctx.arc(cx, cy, 14 * pulse, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(' + BLUE + ',' + (0.25 * pulse).toFixed(2) + ')';
-      ctx.lineWidth = 1; ctx.stroke();
-      // label
-      var label = 'GAP FOUND';
-      ctx.font = '600 10px "JetBrains Mono", monospace';
-      ctx.fillStyle = 'rgba(' + BLUE + ',0.9)';
-      ctx.fillText(label, r.x, r.y - 9);
-    }
+        var hg = sctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 320);
+        hg.addColorStop(0, rgba(halo, 0.40 * sA));
+        hg.addColorStop(0.18, rgba(halo, 0.20 * sA));
+        hg.addColorStop(0.45, rgba(halo, 0.07 * sA));
+        hg.addColorStop(1, rgba(halo, 0));
+        sctx.fillStyle = hg;
+        sctx.beginPath(); sctx.arc(sunX, sunY, 320, 0, Math.PI * 2); sctx.fill();
 
-    function staticFrame() {
-      ctx.clearRect(0, 0, W, H);
-      for (var i = 0; i < dots.length; i++) {
-        var d = dots[i];
-        var fade = inRect(d.x, d.y, gap, -12) ? 0.06 : 1;
-        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + (d.blue ? BLUE : INK) + ',' + ((d.blue ? 0.5 : 0.2) * fade) + ')';
-        ctx.fill();
+        // 지평선에 가까울수록 살짝 눌린 모양 (대기 굴절)
+        var squash = 1 - 0.22 * (1 - clamp(sunAlt * 4, 0, 1));
+        sctx.save();
+        sctx.translate(sunX, sunY); sctx.scale(1, squash); sctx.translate(-sunX, -sunY);
+        var cg = sctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 26);
+        cg.addColorStop(0, rgba(mixc(core, [255, 255, 255], 0.55), sA));
+        cg.addColorStop(0.62, rgba(core, sA));
+        cg.addColorStop(1, rgba(core, 0.82 * sA));
+        sctx.fillStyle = cg;
+        sctx.beginPath(); sctx.arc(sunX, sunY, 26, 0, Math.PI * 2); sctx.fill();
+        sctx.restore();
       }
-      drawReticle(gap, 0);
+
+      if (dusk > 0.01) {
+        var warm = tod < 12 ? WARM_AM : WARM_PM;
+        var lg = sctx.createRadialGradient(sunX, horizon, 0, sunX, horizon, w * 0.62);
+        lg.addColorStop(0, rgba(warm, 0.42 * dusk));
+        lg.addColorStop(0.45, rgba(warm, 0.14 * dusk));
+        lg.addColorStop(1, rgba(warm, 0));
+        sctx.fillStyle = lg; sctx.fillRect(0, 0, w, h);
+      }
+
+      for (i = 0; i < clouds.length; i++) {
+        var cl = clouds[i];
+        var x = ((cl.x + sframe * cl.sp) % 1.25 - 0.12) * w, y = cl.y * h;
+        var tint = mixc(pal.b, dusk > 0.25 ? CLOUD_DUSK : CLOUD_DAY, 0.55);
+        var ccg = sctx.createRadialGradient(x, y, 0, x, y, cl.w * w);
+        ccg.addColorStop(0, rgba(tint, cl.a * (0.5 + dusk * 0.9)));
+        ccg.addColorStop(1, rgba(tint, 0));
+        sctx.save();
+        sctx.translate(x, y); sctx.scale(1, cl.h / cl.w); sctx.translate(-x, -y);
+        sctx.fillStyle = ccg;
+        sctx.beginPath(); sctx.arc(x, y, cl.w * w, 0, Math.PI * 2); sctx.fill();
+        sctx.restore();
+      }
+
+      // 아래쪽은 본문 패널 색으로 녹아듭니다 (경계선 제거)
+      var fg = sctx.createLinearGradient(0, horizon - h * 0.30, 0, h);
+      fg.addColorStop(0, rgba(GROUND, 0));
+      fg.addColorStop(0.42, rgba(GROUND, 0.30));
+      fg.addColorStop(0.74, rgba(GROUND, 0.82));
+      fg.addColorStop(1, rgba(GROUND, 1));
+      sctx.fillStyle = fg;
+      sctx.fillRect(0, horizon - h * 0.30, w, h - horizon + h * 0.30);
     }
 
-    resize();
+    var skyVisible = true;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        skyVisible = entries[0].isIntersecting;
+      }).observe(sky);
+    }
+    function skyLoop() {
+      if (skyVisible) {
+        tod = (tod + 24 / (DAY_SEC * 60)) % 24;
+        sframe++;
+        paintSky();
+      }
+      requestAnimationFrame(skyLoop);
+    }
+
+    skyResize();
     window.addEventListener('resize', function () {
-      clearTimeout(canvas._rt); canvas._rt = setTimeout(resize, 180);
+      clearTimeout(sky._rt); sky._rt = setTimeout(skyResize, 180);
     });
-    if (!reduce) {
-      window.addEventListener('pointermove', function (ev) {
-        var rect = canvas.getBoundingClientRect();
-        if (rect.height) { tmx = (ev.clientX - rect.left) / rect.width; tmy = (ev.clientY - rect.top) / rect.height; }
-      }, { passive: true });
-    }
-    if (reduce) staticFrame(); else requestAnimationFrame(draw);
+    if (!reduce) requestAnimationFrame(skyLoop);   // reduce 면 위에서 그린 한 장만 유지
   }
 
   /* ---- contact form (static site → composes an email) ---- */
