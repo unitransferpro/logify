@@ -218,15 +218,10 @@ h1,h2,h3{font-family:var(--f-display);font-weight:700;line-height:1.05;
   border-radius:34px 34px 0 0;box-shadow:0 -30px 60px rgba(6,9,19,.42);margin-top:-40px}
 .page-grip{width:56px;height:4px;border-radius:var(--pill);background:var(--line);margin:22px auto 0}
 
-/* 하늘 위에 떠 있는 동안의 나브 (스크롤하면 원래 유리 나브로 돌아갑니다) */
-body.sky .nav:not(.scrolled) .nav-inner{background:rgba(10,14,24,.34);
-  border-color:rgba(255,255,255,.22);box-shadow:0 10px 34px rgba(6,9,19,.28)}
-body.sky .nav:not(.scrolled) .brand .b-log{color:#fff}
-body.sky .nav:not(.scrolled) .brand .b-ify{color:#ffd9a8}
-body.sky .nav:not(.scrolled) .nav-links a{color:rgba(255,255,255,.86)}
-body.sky .nav:not(.scrolled) .nav-links a:hover{color:#fff;background:rgba(255,255,255,.12)}
-body.sky .nav:not(.scrolled) .nav-toggle{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.12)}
-body.sky .nav:not(.scrolled) .nav-toggle span{background:#fff}
+/* 하늘 위 나브: 로고와 메뉴는 원래 색 그대로 두고, 유리판만 살짝 진하게
+   (어두운 하늘에서도 흰 유리 위의 잉크 로고가 그대로 읽힙니다) */
+body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
+  box-shadow:var(--sh-2),inset 0 1px 0 rgba(255,255,255,.85)}
 
 /* reveal-on-load lines */
 .reveal-up{opacity:0;transform:translateY(120%)}
@@ -544,6 +539,67 @@ body.sky .nav:not(.scrolled) .nav-toggle span{background:#fff}
 .tl-item .plan{display:inline-block;margin-left:9px;font-family:var(--f-mono);font-size:.58rem;
   letter-spacing:.12em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);
   padding:.22em .55em;border-radius:6px;vertical-align:middle}
+
+/* ---------- PRODUCT DETAIL · SUPPORT (신규 페이지) ---------- */
+.detail-top{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.detail-top .phone{margin:0 auto}
+.crumb{font-size:.86rem;color:var(--faint);margin-bottom:22px}
+.crumb a:hover{color:var(--accent-ink)}
+.store-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.store-btn{display:inline-flex;align-items:center;gap:.6em;padding:.82em 1.4em;
+  border-radius:var(--pill);background:rgba(13,15,20,.06);border:1px dashed var(--line);
+  color:var(--faint);font-weight:600;font-size:.95rem;cursor:default}
+.store-note{width:100%;font-size:.82rem;color:var(--faint);margin:2px 0 0}
+.tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}
+.tags span{padding:.5em 1em;border-radius:var(--pill);border:1px solid var(--line);
+  background:#fff;font-size:.86rem;font-weight:500;color:var(--ink-2)}
+.feat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:16px}
+.feat-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--sh-2)}
+.feat-card .band{height:96px;background:linear-gradient(160deg,var(--hue),rgba(255,255,255,.9))}
+.feat-card .txt{padding:22px 24px 26px}
+.feat-card h3{font-size:1.12rem;margin-bottom:8px}
+.feat-card p{margin:0;font-size:.94rem;color:var(--muted);line-height:1.7}
+
+/* 고객지원 */
+.sup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.sup-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px 22px;text-align:center;box-shadow:var(--sh-1);transition:transform .18s ease,box-shadow .2s ease}
+.sup-card:hover{transform:translateY(-3px);box-shadow:var(--sh-2)}
+.sup-card .ic{width:44px;height:44px;border-radius:13px;margin:0 auto 14px;background:var(--hue);opacity:.18}
+.sup-card b{display:block;font-size:1.05rem}
+.sup-card span{font-size:.86rem;color:var(--muted)}
+.notice{display:block;padding:16px 20px;border-radius:var(--radius-sm);
+  background:var(--accent-soft);border:1px solid rgba(59,91,219,.18);color:var(--accent-ink);
+  font-size:.92rem;line-height:1.7;margin-bottom:26px}
+.notice b{display:inline-block;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.12em;
+  text-transform:uppercase;background:rgba(59,91,219,.14);padding:.25em .7em;border-radius:var(--pill);
+  margin-right:8px;vertical-align:2px}
+.faq{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.faq details{border-bottom:1px solid var(--line-soft)}
+.faq details:last-child{border-bottom:none}
+.faq summary{padding:20px 24px;display:flex;align-items:center;gap:14px;cursor:pointer;
+  font-weight:600;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";margin-left:auto;color:var(--faint);font-size:1.2rem}
+.faq details[open] summary::after{content:"−"}
+.faq summary .q{font-family:var(--f-mono);font-size:.82rem;color:var(--accent);font-weight:600}
+.faq .a{padding:0 24px 22px 60px;font-size:.95rem;color:var(--muted);line-height:1.8}
+.sample{display:inline-block;font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;
+  text-transform:uppercase;padding:.25em .7em;border-radius:var(--pill);
+  background:#fff2e0;color:#a9640f;margin-left:8px;vertical-align:middle}
+
+/* 회사 정보 표 */
+.corp-table{width:100%;border-collapse:collapse;font-size:.96rem}
+.corp-table th{text-align:left;width:190px;padding:14px 0;color:var(--faint);font-weight:500;
+  border-bottom:1px solid var(--line-soft)}
+.corp-table td{padding:14px 0;border-bottom:1px solid var(--line-soft);color:var(--ink-2)}
+
+@media(max-width:900px){
+  .detail-top{grid-template-columns:1fr;gap:36px}
+  .feat-cards{grid-template-columns:1fr}
+  .sup-grid{grid-template-columns:1fr 1fr}
+}
 
 /* ---------- responsive ---------- */
 @media(max-width:900px){
