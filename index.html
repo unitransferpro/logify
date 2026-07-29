@@ -4,53 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Logify · 로기파이 — 당신의 일상을 log 합니다</title>
-<meta name="description" content="로기파이(Logify)는 당신의 일상을 기록으로 남기는 앱을 만드는 소프트웨어 스튜디오입니다. 편입로그, 펫로그, 라스트티, meetlog를 만듭니다.">
+<meta name="description" content="로기파이(Logify)는 당신의 일상을 기록으로 남기는 앱을 만드는 소프트웨어 스튜디오입니다. 편입로그, meetlog, 라스트티, 펫로그를 만들고 운영합니다.">
 <meta name="theme-color" content="#eef1f8">
-<meta property="og:title" content="Logify · 로기파이">
-<meta property="og:description" content="당신의 일상을 log 합니다.">
+<meta property="og:title" content="Logify · 로기파이 — 당신의 일상을 log 합니다">
+<meta property="og:description" content="로기파이(Logify)는 당신의 일상을 기록으로 남기는 앱을 만드는 소프트웨어 스튜디오입니다. 편입로그, meetlog, 라스트티, 펫로그를 만들고 운영합니다.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/styles.css?v=5">
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org","@type":"Organization",
-  "name":"로기파이","alternateName":"Logify","url":"https://logify.co.kr",
-  "email":"service@logify.co.kr","foundingDate":"2026-07-06",
-  "description":"일상을 기록으로 남기는 앱을 만드는 소프트웨어 스튜디오",
-  "address":{"@type":"PostalAddress","addressRegion":"서울특별시","addressLocality":"서초구","addressCountry":"KR"}
-}
-</script>
+<link rel="stylesheet" href="assets/styles.css?v=7">
 </head>
 <body class="sky">
-<div class="aurora" aria-hidden="true"><i></i></div>
-<div class="grain" aria-hidden="true"></div>
-
-<!-- ============ NAV ============ -->
-<header class="nav" id="top">
-  <div class="nav-inner">
-    <a class="brand" href="index.html" aria-label="Logify 홈"><span class="b-log">Log</span><span class="b-ify">ify</span></a>
-    <nav aria-label="주요 메뉴">
-      <ul class="nav-links">
-        <li><a href="products.html">서비스</a></li>
-        <li><a href="about.html">회사 소개</a></li>
-        <li><a href="support.html">고객지원</a></li>
-        <li><a href="contact.html">문의</a></li>
-      </ul>
-    </nav>
-    <div class="nav-right">
-      <a class="btn btn-accent nav-cta" href="contact.html">제휴 문의</a>
-      <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navMobile">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="index.html" aria-label="Logify 홈">Log<i>ify</i></a>
+    <nav class="menu" aria-label="주요 메뉴"><a href="products.html">서비스</a><a href="about.html">회사 소개</a><a href="support.html">고객지원</a><a href="contact.html">문의</a></nav>
+    <a class="btn btn-accent" href="contact.html">제휴 문의</a>
+    <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navSheet">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  <div class="nav-mobile" id="navMobile">
+  <div class="nav-sheet" id="navSheet">
     <a href="products.html">서비스</a>
     <a href="about.html">회사 소개</a>
     <a href="support.html">고객지원</a>
@@ -58,379 +33,146 @@
     <a class="btn btn-accent" href="contact.html">제휴 문의</a>
   </div>
 </header>
-
-<main>
-<!-- ============ HERO — 하루의 빛 (해와 달이 한 궤도를 돕니다) ============ -->
 <div class="hero-stick">
-<section class="hero hero-sky">
-  <canvas class="hero-canvas" id="skyfield" aria-hidden="true"></canvas>
-  <div class="hero-scrim" aria-hidden="true"></div>
-  <div class="container">
-    <span class="hero-badge reveal-up"><span class="dot"></span>SOFTWARE STUDIO · SEOUL</span>
-    <h1>
-      <span class="line reveal-up" style="animation-delay:.05s">당신의 일상을</span>
-      <span class="line reveal-up" style="animation-delay:.13s"><span class="accent">log</span> 합니다.</span>
-    </h1>
-    <p class="hero-sub reveal-up" style="animation-delay:.24s">
-      무엇에 몰입하든, 매일 남길 것이 생깁니다.
-      그 기록이 흩어지지 않고 쌓이면 다음 선택이 쉬워집니다.
-      로기파이는 분야마다 그 기록을 남기는 앱을 만듭니다.
-    </p>
-    <div class="hero-cta reveal-up" style="animation-delay:.34s">
-      <a class="btn btn-primary" href="#apps">우리가 만든 서비스 <span class="arr">↗</span></a>
-      <a class="btn btn-ghost" href="#vision">일하는 방식 보기</a>
+<section class="skyhero">
+  <canvas class="sky" id="skyfield" aria-hidden="true"></canvas>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="inner">
+    <span class="chip"><b></b>SOFTWARE STUDIO · SEOUL</span>
+    <h1>당신의 일상을 <em>log</em> 합니다.</h1>
+    <p class="sub">무엇에 몰입하든, 매일 남길 것이 생깁니다. 그 기록이 흩어지지 않고 쌓이면 다음 선택이 쉬워집니다. 로기파이는 분야마다 그 기록을 남기는 앱을 만듭니다.</p>
+    <div class="cta">
+      <a class="btn btn-light" href="products.html">우리가 만든 서비스 ↗</a>
+      <a class="btn btn-line" href="about.html">회사 소개</a>
     </div>
   </div>
-  <div class="hero-scroll" aria-hidden="true"><span>SCROLL</span><span class="rail"></span></div>
+  <div class="cue" aria-hidden="true">SCROLL<i></i></div>
 </section>
 </div>
 
-<!-- 본문은 하늘 위로 올라옵니다 (히어로와 본문 사이 경계선을 없애는 방식) -->
 <div class="page-body">
 <div class="page-grip" aria-hidden="true"></div>
 
-<!-- ============ VISION ============ -->
-<section class="section vision" id="vision">
-  <div class="container">
-    <div class="vision-grid">
-      <div class="vision-copy rv">
-        <span class="eyebrow">Our vision</span>
-        <p class="pullquote">
-          이름 그대로입니다. <span class="accent">log + ify</span>.
-          기록으로 만든다는 뜻입니다.
-        </p>
-        <p>한 가지에 몰입한 사람에게는 남길 것이 많습니다. 편입 준비의 하루,
-          이번 라운드의 타수, 우리 아이의 접종과 체중. 그런데 그 기록은 대개
-          <strong>흩어지거나 아예 남지 않습니다</strong>.</p>
-        <p>그래서 우리는 남기기 쉽게 만들고, 남은 기록을 읽을 수 있게 만듭니다.
-          흩어진 공개 기록도 함께 모읍니다. 편입 경쟁률과 동물병원 진료비가 그런 경우입니다.
-          <strong>내 기록과 세상의 기록이 만나면</strong> 다음 선택이 쉬워집니다.
-          앱 이름에 <strong>로그</strong>가 붙는 이유입니다.</p>
-        <p>우리도 직접 쇼핑몰과 서비스를 운영하는 <strong>사용자이자 창업자</strong>입니다.
-          대행사가 아니라, 같은 문제를 겪어본 사람이 만드는 앱이라는 점. 그게 로기파이의 차이입니다.</p>
-      </div>
-      <div class="ethos rv rv-d1" id="how" aria-label="일하는 방식">
-        <div class="step">
-          <span class="idx">01</span>
-          <div><h3>남지 않는 기록을 찾는다</h3>
-            <p>사람들이 남기고 싶어 하지만 흩어지거나 사라지는 기록을 찾아, 먼저 적어 둡니다.</p></div>
-        </div>
-        <div class="step">
-          <span class="idx">02</span>
-          <div><h3>가장 작은 해답을 만든다</h3>
-            <p>과하지 않게. 그 문제 하나만 정확히 푸는 앱을 빠르게 만들어 내놓습니다.</p></div>
-        </div>
-        <div class="step">
-          <span class="idx">03</span>
-          <div><h3>쓰면서 다듬는다</h3>
-            <p>실제 사용 데이터를 기록하고, 숫자를 보며 매일 조금씩 더 나은 제품으로 고쳐 나갑니다.</p></div>
-        </div>
-      </div>
-    </div>
+<section class="c-stats">
+  <div class="stats-in">
+    <div class="stat"><b>4</b><span>우리가 만든 서비스</span></div>
+    <div class="stat"><b>2026</b><span>로기파이 설립</span></div>
+    <div class="stat"><b>100%</b><span>자체 기획 · 개발 · 운영</span></div>
+    <div class="stat"><b>∞</b><span>앞으로 남길 기록</span></div>
   </div>
 </section>
 
-<!-- ============ STATS ============ -->
-<section class="section-tight">
-  <div class="container">
-    <div class="stats">
-      <div class="stat rv"><div class="num"><span data-count="4">0</span></div><div class="lab">우리가 만든 서비스</div></div>
-      <div class="stat rv rv-d1"><div class="num"><span data-count="100">0</span><span class="u">%</span></div><div class="lab">자체 기획 · 개발 · 운영</div></div>
-      <div class="stat rv rv-d2"><div class="num"><span data-count="2026">0</span></div><div class="lab">로기파이 설립</div></div>
-      <div class="stat rv rv-d3"><div class="num"><span class="u">∞</span></div><div class="lab">앞으로 남길 기록</div></div>
+<section class="section" id="products">
+  <div class="wrap">
+    <div class="s-head rv">
+      <div class="eyebrow">Our Products</div>
+      <h2>각각의 앱은,<br>남지 않던 기록에서 태어났습니다.</h2>
+      <p>서로 다른 자리에서 사라지던 기록을, 그 자리에 꼭 맞는 방식으로 남깁니다.</p>
     </div>
-  </div>
-</section>
-
-<!-- ============ APPS ============ -->
-<section class="section" id="apps">
-  <div class="container">
-    <div class="section-head rv" style="margin-bottom:44px">
-      <span class="eyebrow">Our products</span>
-      <h2 class="h-section">각각의 앱은,<br>남지 않던 기록에서 태어났습니다.</h2>
-      <p class="lede">서로 다른 자리에서 사라지던 기록을, 그 자리에 꼭 맞는 방식으로 남깁니다.</p>
-    </div>
-
-    <div class="app-features">
-
-      <!-- 편입로그 -->
-      <article class="app-feature" style="--hue:var(--h-pyeonip)">
-        <div class="phone-stage rv from-left">
-          <div class="phone">
-            <div class="phone-screen"><img src="assets/shots/pyeoniplog.png" width="390" height="866" loading="lazy" alt="편입로그 앱 화면 — 로그인"></div>
-            <span class="float-tag">Beta</span>
-          </div>
-        </div>
-        <div class="app-detail rv from-right">
-          <span class="cat">교육 · 커뮤니티</span>
-          <div class="app-name-lg"><h3>편입로그</h3><span class="ko">PyeonipLog</span></div>
-          <p class="gap-line">편입 정보는 넘치는데, <b>믿을 수 있는 기록</b>이 없었습니다.</p>
-          <p>학교별 모집요강과 경쟁률, 합격 후기 커뮤니티, 매일 하는 단어 학습까지 한 앱에 모았습니다.
-            준비하는 하루가 로그로 쌓여, 합격까지의 기록이 됩니다.</p>
-          <ul class="feat-list">
-            <li>학교별 모집요강·경쟁률 비교</li>
-            <li>합격 후기 &amp; 익명 커뮤니티</li>
-            <li>게임형 영어 단어·문법 학습</li>
-            <li>편입 캘린더 · 합격 예측</li>
-          </ul>
-          <div class="foot">
-            <a class="detail-link" href="https://pyeonipgak.unitransferpro.workers.dev/" target="_blank" rel="noopener">서비스 바로가기 <span class="arr">↗</span></a>
-            <span class="status-pill">Beta · 웹</span>
-          </div>
+    <div class="apps">
+      <article class="app rv" style="--hue:var(--h-pyeonip)">
+        <span class="hue"></span><span class="badge">Beta</span>
+        <div class="phone"><div class="shot"><img src="assets/shots/pyeoniplog.png" width="420" height="820" loading="lazy" alt="편입로그 앱 화면 — 로그인"></div></div>
+        <div class="app-body">
+          <div class="app-cat">교육 · 커뮤니티</div>
+          <h3>편입로그</h3><div class="en">PyeonipLog</div>
+          <p class="prob">편입 정보는 넘치는데, <b>믿을 수 있는 기록</b>이 없었습니다.</p>
+          <ul><li>학교별 모집요강·경쟁률 비교</li><li>합격 후기 &amp; 익명 커뮤니티</li></ul>
+          <a class="more" href="app-pyeoniplog.html">서비스 자세히 보기 →</a>
         </div>
       </article>
-
-      <!-- 펫로그 -->
-      <article class="app-feature rev" style="--hue:var(--h-pet)">
-        <div class="phone-stage rv from-right">
-          <div class="phone">
-            <div class="phone-screen"><img src="assets/shots/petlog.png" width="390" height="866" loading="lazy" alt="펫로그 앱 화면 — 반려동물 프로필 등록"></div>
-            <span class="float-tag">Beta</span>
-          </div>
-        </div>
-        <div class="app-detail rv from-left">
-          <span class="cat">펫 · 공공데이터</span>
-          <div class="app-name-lg"><h3>펫로그</h3><span class="ko">PetLog</span></div>
-          <p class="gap-line">동물병원 진료비, <b>기준</b>을 알 수 없었습니다.</p>
-          <p>농림축산식품부가 공개한 진료비를 시도·시군구별로 비교하고, 전국 5,459개 동물병원을 찾습니다.
-            접종과 체중을 기록해 두면, 그 로그에 맞춰 우리 아이 케어까지 이어집니다.</p>
-          <ul class="feat-list">
-            <li>공공데이터 기반 진료비 비교</li>
-            <li>전국 5,459개 동물병원 찾기</li>
-            <li>방문별 진료비 계산기</li>
-            <li>접종·체중 케어 기록</li>
-          </ul>
-          <div class="foot">
-            <a class="detail-link" href="https://unitransferpro.github.io/petsise/" target="_blank" rel="noopener">서비스 바로가기 <span class="arr">↗</span></a>
-            <span class="status-pill">Beta · 웹</span>
-          </div>
+      <article class="app rv" style="--hue:var(--h-pet)">
+        <span class="hue"></span><span class="badge">Beta</span>
+        <div class="phone"><div class="shot"><img src="assets/shots/petlog.png" width="420" height="820" loading="lazy" alt="펫로그 앱 화면 — 반려동물 프로필 등록"></div></div>
+        <div class="app-body">
+          <div class="app-cat">펫 · 공공데이터</div>
+          <h3>펫로그</h3><div class="en">PetLog</div>
+          <p class="prob">동물병원 진료비, <b>기준</b>을 알 수 없었습니다.</p>
+          <ul><li>공공데이터 기반 진료비 비교</li><li>전국 5,459개 동물병원 찾기</li></ul>
+          <a class="more" href="app-petlog.html">서비스 자세히 보기 →</a>
         </div>
       </article>
-
-      <!-- LastTee -->
-      <article class="app-feature" style="--hue:var(--h-tee)">
-        <div class="phone-stage rv from-left">
-          <div class="phone">
-            <div class="phone-screen"><img src="assets/shots/lasttee.png" width="390" height="866" loading="lazy" alt="라스트티 앱 화면 — 온보딩"></div>
-            <span class="float-tag">Beta</span>
-          </div>
-        </div>
-        <div class="app-detail rv from-right">
-          <span class="cat">골프 · 마켓플레이스</span>
-          <div class="app-name-lg"><h3>LastTee</h3><span class="ko">라스트티</span></div>
-          <p class="gap-line">갑자기 빈 티타임, <b>채울 사람</b>을 못 찾았습니다.</p>
-          <p>일행이 취소해 비어버린 자리를, 지금 칠 사람과 지도 위에서 연결합니다.
-            라운드가 기록으로 남아 그린지수가 되고, 다음 동반자를 고를 때 근거가 됩니다.</p>
-          <ul class="feat-list">
-            <li>빈 티타임 실시간 지도</li>
-            <li>마감 임박 카운트다운</li>
-            <li>그린피·캐디피 1/N 정산</li>
-            <li>라운드 기록 기반 그린지수</li>
-          </ul>
-          <div class="foot">
-            <a class="detail-link" href="https://unitransferpro.github.io/lasttee/" target="_blank" rel="noopener">서비스 바로가기 <span class="arr">↗</span></a>
-            <span class="status-pill">Beta · 웹</span>
-          </div>
+      <article class="app rv" style="--hue:var(--h-tee)">
+        <span class="hue"></span><span class="badge">Beta</span>
+        <div class="phone"><div class="shot"><img src="assets/shots/lasttee.png" width="420" height="820" loading="lazy" alt="라스트티 앱 화면 — 온보딩"></div></div>
+        <div class="app-body">
+          <div class="app-cat">골프 · 마켓플레이스</div>
+          <h3>LastTee</h3><div class="en">라스트티</div>
+          <p class="prob">갑자기 빈 티타임, <b>채울 사람</b>을 못 찾았습니다.</p>
+          <ul><li>빈 티타임 실시간 지도</li><li>마감 임박 카운트다운</li></ul>
+          <a class="more" href="app-lasttee.html">서비스 자세히 보기 →</a>
         </div>
       </article>
-
-      <!-- meetlog -->
-      <article class="app-feature rev" style="--hue:var(--h-meet)">
-        <div class="phone-stage rv from-right">
-          <div class="phone">
-            <div class="phone-screen"><img src="assets/shots/meetlog.png" width="390" height="866" loading="lazy" alt="meetlog 앱 화면 — 오픈 준비 중 안내"></div>
-            <span class="float-tag">준비 중</span>
-          </div>
-        </div>
-        <div class="app-detail rv from-left">
-          <span class="cat">소셜 · 데이팅</span>
-          <div class="app-name-lg"><h3>meetlog</h3><span class="ko">밋로그</span></div>
-          <p class="gap-line">소개팅 앱은 많은데, <b>진짜 만남</b>은 드물었습니다.</p>
-          <p>가상 프로필과 가상 대화 없이, 지금 실제로 근처에 있는 사람만 이어 줍니다.
-            스쳐 지나갈 순간을 기록으로 남긴다는 뜻에서 이름이 meetlog입니다.</p>
-          <ul class="feat-list">
-            <li>위치 기반 실시간 매칭</li>
-            <li>가상 프로필·가상 대화 없음</li>
-            <li>사진 심사 후 공개</li>
-            <li>만 19세 이상 이용</li>
-          </ul>
-          <div class="foot">
-            <a class="detail-link" href="https://unitransferpro.github.io/meetlog/" target="_blank" rel="noopener">서비스 바로가기 <span class="arr">↗</span></a>
-            <span class="status-pill">준비 중 · 서버 연결 예정</span>
-          </div>
+      <article class="app rv" style="--hue:var(--h-meet)">
+        <span class="hue"></span><span class="badge">준비 중</span>
+        <div class="phone"><div class="shot"><img src="assets/shots/meetlog.png" width="420" height="820" loading="lazy" alt="meetlog 앱 화면 — 오픈 준비 중 안내"></div></div>
+        <div class="app-body">
+          <div class="app-cat">소셜 · 데이팅</div>
+          <h3>meetlog</h3><div class="en">밋로그</div>
+          <p class="prob">소개팅 앱은 많은데, <b>진짜 만남</b>은 드물었습니다.</p>
+          <ul><li>위치 기반 실시간 매칭</li><li>가상 프로필·가상 대화 없음</li></ul>
+          <a class="more" href="app-meetlog.html">서비스 자세히 보기 →</a>
         </div>
       </article>
-
-      <!-- next teaser -->
-      <div class="next-teaser rv">
-        <div>
-          <span class="nt-brackets">[ + ]</span>
-          <h3>다음 기록을 찾고 있습니다</h3>
-          <p>우리는 지금도 남지 않고 사라지는 기록을 찾고 있습니다.
-            남겨야 할 기록이 보인다면, 함께 만들어요.</p>
-        </div>
-        <a class="btn btn-primary" href="contact.html">아이디어 제안하기 <span class="arr">↗</span></a>
-      </div>
-
     </div>
   </div>
 </section>
 
-<!-- ============ VALUES ============ -->
-<section class="section" id="why">
-  <div class="container">
-    <div class="section-head rv" style="margin-bottom:44px">
-      <span class="eyebrow">Why Logify</span>
-      <h2 class="h-section">우리가 만드는 방식은,<br>조금 다릅니다.</h2>
-      <p class="lede">대행사가 아니라, 같은 문제를 직접 겪고 매일 쓰는 사람이 만듭니다.</p>
+<section class="section alt">
+  <div class="wrap">
+    <div class="s-head rv">
+      <div class="eyebrow">How We Work</div>
+      <h2>우리가 일하는 방식은,<br>기록에서 시작합니다.</h2>
     </div>
-    <div class="values-grid">
-      <div class="value-card rv">
-        <div class="vn">01</div>
-        <h3>겪은 문제만 만든다</h3>
-        <p>우리도 쇼핑몰과 서비스를 직접 운영합니다. 상상 속 사용자가 아니라,
-          우리 자신의 불편에서 시작합니다.</p>
-      </div>
-      <div class="value-card rv rv-d1">
-        <div class="vn">02</div>
-        <h3>가장 작게 시작한다</h3>
-        <p>기능을 쌓기 전에 문제 하나를 정확히. 군더더기 없이, 그 문제만 푸는
-          제품을 먼저 세상에 내놓습니다.</p>
-      </div>
-      <div class="value-card rv rv-d2">
-        <div class="vn">03</div>
-        <h3>데이터로 증명한다</h3>
-        <p>감이 아니라 로그로 결정합니다. 실제로 어떻게 쓰이는지를 보고 다음을
-          정합니다 — 로기파이라는 이름 그대로.</p>
-      </div>
-      <div class="value-card rv rv-d3">
-        <div class="vn">04</div>
-        <h3>매일 고친다</h3>
-        <p>완벽한 첫 버전을 기다리지 않습니다. 빠르게 내놓고, 쓰임을 보며 매일
-          더 나은 제품으로 다듬습니다.</p>
-      </div>
+    <div class="steps">
+      <div class="step rv"><div class="n">01</div><h3>남지 않는 기록을 찾는다</h3>
+        <p>사람들이 남기고 싶어 하지만 흩어지거나 사라지는 기록을 찾아, 먼저 적어 둡니다.</p></div>
+      <div class="step rv rv-d1"><div class="n">02</div><h3>가장 작은 해답을 만든다</h3>
+        <p>과하지 않게. 그 문제 하나만 정확히 푸는 앱을 빠르게 만들어 내놓습니다.</p></div>
+      <div class="step rv rv-d2"><div class="n">03</div><h3>쓰면서 다듬는다</h3>
+        <p>실제 사용 데이터를 기록하고, 숫자를 보며 매일 조금씩 더 나은 제품으로 고쳐 나갑니다.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ============ ROADMAP ============ -->
-<section class="section" id="roadmap">
-  <div class="container">
-    <div class="section-head rv" style="margin-bottom:48px">
-      <span class="eyebrow">Roadmap</span>
-      <h2 class="h-section">기록을 남기고, 읽고,<br>다시 남깁니다.</h2>
-      <p class="lede">로기파이가 지나온 길과, 앞으로 남길 기록입니다.</p>
-    </div>
-    <div class="timeline">
-      <div class="prog" aria-hidden="true"></div>
-      <div class="tl-item done rv">
-        <span class="node" aria-hidden="true"></span>
-        <div class="yr">2025</div>
-        <h3>관찰의 시작</h3>
-        <p>직접 쇼핑몰과 서비스를 운영하며, 매일 반복되는 불편과 아무도 풀지 않은
-          문제들을 하나씩 기록하기 시작했습니다.</p>
-      </div>
-      <div class="tl-item done rv rv-d1">
-        <span class="node" aria-hidden="true"></span>
-        <div class="yr">2026.07</div>
-        <h3>로기파이 설립</h3>
-        <p>응용 소프트웨어 개발·공급업으로 법인을 설립하고, "남지 않는 기록을 앱으로
-          남긴다"는 하나의 원칙을 세웠습니다.</p>
-      </div>
-      <div class="tl-item now rv rv-d2">
-        <span class="node" aria-hidden="true"></span>
-        <div class="yr">2026</div>
-        <h3>4개 서비스 베타 공개</h3>
-        <p>편입로그 · 펫로그 · 라스트티 · meetlog. 서로 다른 자리에서 사라지던 기록을
-          각 자리에 맞는 앱으로 만들어, 웹에서 먼저 써 볼 수 있게 공개했습니다.</p>
-      </div>
-      <div class="tl-item rv rv-d3">
-        <span class="node" aria-hidden="true"></span>
-        <div class="yr">2026 하반기</div>
-        <h3>정식 오픈 &amp; 네이티브 확대 <span class="plan">계획</span></h3>
-        <p>각 서비스의 정식 오픈과 함께 iOS·Android 네이티브 앱으로 사용성을
-          넓혀갑니다.</p>
-      </div>
-      <div class="tl-item rv rv-d4">
-        <span class="node" aria-hidden="true"></span>
-        <div class="yr">2027</div>
-        <h3>다음 기록으로 <span class="plan">계획</span></h3>
-        <p>아직 아무도 남기지 않는 기록을 찾아 서비스를 넓히고, 쌓인 기록을 읽는 도구를 더
-          정교하게 다듬습니다.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CTA ============ -->
-<section class="section-tight">
-  <div class="container">
+<section class="section tight">
+  <div class="wrap">
     <div class="cta-band rv">
-      <span class="eyebrow">Let's build</span>
-      <h2>당신의 일에도, 아직 남지 않은 기록이 있습니다.</h2>
-      <p>제휴, 투자, 신규 서비스 아이디어, 채용 — 어떤 이야기든 좋습니다.
-        같은 문제를 함께 볼 사람을 찾고 있습니다.</p>
-      <a class="btn btn-accent" href="contact.html">문의하기 <span class="arr">↗</span></a>
+      <h2>당신의 일에도,<br>아직 남지 않은 기록이 있습니다.</h2>
+      <div>
+        <p>제휴, 투자, 신규 서비스 아이디어, 채용 — 어떤 이야기든 좋습니다. 같은 문제를 함께 볼 사람을 찾고 있습니다.</p>
+        <a class="btn btn-accent" style="margin-top:22px;" href="contact.html">문의하기 ↗</a>
+      </div>
     </div>
   </div>
 </section>
-</main>
-
-<!-- ============ FOOTER ============ -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-top">
-      <div class="brand-col">
-        <a class="brand" href="index.html"><span class="b-log">Log</span><span class="b-ify">ify</span></a>
-        <p class="footer-blurb">당신의 일상을 기록으로 남기는 앱을 만드는 소프트웨어 스튜디오.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Services</h4>
-        <ul>
-          <li><a href="app-pyeoniplog.html">편입로그</a></li>
-          <li><a href="app-petlog.html">펫로그</a></li>
-          <li><a href="app-lasttee.html">라스트티</a></li>
-          <li><a href="app-meetlog.html">meetlog</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="index.html#vision">비전</a></li>
-          <li><a href="index.html#apps">서비스</a></li>
-          <li><a href="about.html">회사 소개</a></li>
-            <li><a href="support.html">고객지원</a></li>
-            <li><a href="contact.html">문의하기</a></li>
-          <li><a href="privacy.html">개인정보처리방침</a></li>
-          <li><a href="terms.html">이용약관</a></li>
-        </ul>
-      </div>
+</div>
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <div class="logo" style="font-size:22px; margin-bottom:14px;">Log<i>ify</i></div>
+      <p style="margin:0 0 16px; font-size:14px; color:var(--muted); line-height:1.65; max-width:34ch;">
+        당신의 일상을 기록으로 남기는 앱을 만드는 소프트웨어 스튜디오.</p>
+      <div class="corp">상호 로기파이 (Logify)<br>대표 박준하<br>사업자등록번호 328-67-00895<br>서울특별시 서초구 잠원로 166-17, 3동 604호 (잠원동, 강변아파트)<br><a href="mailto:service@logify.co.kr">service@logify.co.kr</a></div>
     </div>
-
-    <!-- 사업자등록증 -->
-    <div class="biz-reg">
-      <dl><dt>상호</dt><dd>로기파이 (Logify)</dd></dl>
-      <dl><dt>대표</dt><dd>박준하</dd></dl>
-      <dl><dt>사업자등록번호</dt><dd>328-67-00895</dd></dl>
-      <dl><dt>업태</dt><dd>정보통신업</dd></dl>
-      <dl><dt>종목</dt><dd>응용 소프트웨어 개발 및 공급업</dd></dl>
-      <dl><dt>개업일</dt><dd>2026.07.06</dd></dl>
-      <dl><dt>주소</dt><dd>서울특별시 서초구 잠원로 166-17, 3동 604호 (잠원동, 강변아파트)</dd></dl>
-      <dl><dt>이메일</dt><dd><a href="mailto:service@logify.co.kr">service@logify.co.kr</a></dd></dl>
-    </div>
-
-    <div class="footer-legal">
-      <span class="copy">© <span data-year>2026</span> Logify. All rights reserved.</span>
-      <span class="links">
-        <a href="privacy.html">개인정보처리방침</a>
-        <a href="terms.html">이용약관</a>
-        <a href="contact.html">문의</a>
-      </span>
-    </div>
+    <div><h4>서비스</h4><ul><li><a href="app-pyeoniplog.html">편입로그</a></li><li><a href="app-petlog.html">펫로그</a></li><li><a href="app-lasttee.html">LastTee</a></li><li><a href="app-meetlog.html">meetlog</a></li></ul></div>
+    <div><h4>회사</h4><ul>
+      <li><a href="about.html">회사 소개</a></li>
+      <li><a href="products.html">우리가 만든 서비스</a></li>
+      <li><a href="contact.html">문의하기</a></li>
+    </ul></div>
+    <div><h4>지원</h4><ul>
+      <li><a href="support.html">고객지원</a></li>
+      <li><a href="terms.html">이용약관</a></li>
+      <li><a href="privacy.html">개인정보처리방침</a></li>
+    </ul></div>
+  </div>
+  <div class="foot-bottom">
+    <span>© <span data-year>2026</span> Logify. All rights reserved.</span>
+    <span><a href="terms.html">이용약관</a></span>
+    <span><a href="privacy.html">개인정보처리방침</a></span>
   </div>
 </footer>
-</div><!-- /.page-body -->
-
-<script src="assets/app.js?v=5"></script>
+<script src="assets/app.js?v=7"></script>
 </body>
 </html>

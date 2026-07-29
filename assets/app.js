@@ -1,28 +1,26 @@
-/* Logify site interactions */
+/* ============================================================
+   Logify — 단일 스크립트
+   순서: 연도 스탬프 · 나브(스크롤 상태 + 모바일 시트) · 스크롤 리빌 ·
+        히어로 하늘 캔버스(#skyfield) · 문의 폼 검증 + mailto 조립
+   ES5 스타일, 빌드·의존성 없음.
+   ============================================================ */
 (function () {
   'use strict';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---- year stamp ---- */
-  document.querySelectorAll('[data-year]').forEach(function (el) {
-    el.textContent = new Date().getFullYear();
-  });
+  /* ---- 올해 연도 ---- */
+  var years = document.querySelectorAll('[data-year]');
+  for (var y = 0; y < years.length; y++) years[y].textContent = new Date().getFullYear();
 
-  /* ---- page load flag (kicks hero reveal) ---- */
-  window.addEventListener('load', function () { document.body.classList.add('loaded'); });
-  // fallback so text never gets stuck hidden
-  setTimeout(function () { document.body.classList.add('loaded'); }, 1200);
-
-  /* ---- nav: scrolled state + mobile sheet ---- */
-  /* 히어로 카피는 본문 패널이 덮어 올라오는 만큼 같이 사라집니다. */
+  /* ---- 나브: 스크롤 상태 + 히어로 카피 페이드 ---- */
   var nav = document.querySelector('.nav');
-  var heroCopy = document.querySelector('.hero-sky .container');
+  var heroCopy = document.querySelector('.skyhero .inner');
   if (nav || heroCopy) {
     var onScroll = function () {
-      var y = window.scrollY;
-      if (nav) nav.classList.toggle('scrolled', y > 12);
+      var sy = window.scrollY;
+      if (nav) nav.classList.toggle('solid', sy > 40);
       if (heroCopy) {
-        var k = Math.min(1, y / (window.innerHeight * 0.5));
+        var k = Math.min(1, sy / (window.innerHeight * 0.5));
         heroCopy.style.opacity = String(1 - k);
         heroCopy.style.transform = 'translateY(' + (-k * 26).toFixed(1) + 'px)';
       }
@@ -30,95 +28,82 @@
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
   }
+
+  /* ---- 모바일 메뉴 ---- */
   var toggle = document.querySelector('.nav-toggle');
-  var sheet = document.querySelector('.nav-mobile');
+  var sheet = document.querySelector('.nav-sheet');
   if (toggle && sheet) {
     toggle.addEventListener('click', function () {
       var open = sheet.classList.toggle('open');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
-    sheet.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
+    var links = sheet.querySelectorAll('a');
+    for (var l = 0; l < links.length; l++) {
+      links[l].addEventListener('click', function () {
         sheet.classList.remove('open');
         toggle.setAttribute('aria-expanded', 'false');
       });
-    });
+    }
   }
 
-  /* ---- scroll reveal ---- */
-  var rvs = document.querySelectorAll('.rv');
+  /* ---- 스크롤 리빌 ----
+     화면에 들어온 요소를 켭니다. 관찰자(IntersectionObserver)나 rAF 에 의존하면
+     탭이 비활성일 때 콜백이 오지 않아 본문이 영영 숨는 경우가 있어,
+     스크롤마다 위치를 직접 재고 마지막에는 무조건 켜는 안전장치를 둡니다. */
+  var rvs = [].slice.call(document.querySelectorAll('.rv'));
   if (rvs.length) {
-    if (reduce || !('IntersectionObserver' in window)) {
-      rvs.forEach(function (el) { el.classList.add('in'); });
-    } else {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-      rvs.forEach(function (el) { io.observe(el); });
-    }
-  }
-
-  /* ---- count-up stats ---- */
-  var nums = document.querySelectorAll('[data-count]');
-  if (nums.length) {
-    var run = function (el) {
-      var target = parseFloat(el.getAttribute('data-count'));
-      var suffix = el.getAttribute('data-suffix') || '';
-      var dp = (el.getAttribute('data-count').split('.')[1] || '').length;
-      if (reduce) { el.textContent = target.toFixed(dp) + suffix; return; }
-      var start = null, dur = 1400;
-      var tick = function (t) {
-        if (!start) start = t;
-        var p = Math.min((t - start) / dur, 1);
-        var eased = 1 - Math.pow(1 - p, 3);
-        el.textContent = (target * eased).toFixed(dp) + suffix;
-        if (p < 1) requestAnimationFrame(tick);
-        else el.textContent = target.toFixed(dp) + suffix;
-      };
-      requestAnimationFrame(tick);
+    var revealAll = function () {
+      for (var i = 0; i < rvs.length; i++) rvs[i].classList.add('in');
+      rvs = [];
+      window.removeEventListener('scroll', onReveal);
+      window.removeEventListener('resize', onReveal);
     };
-    if (!('IntersectionObserver' in window)) {
-      nums.forEach(run);
-    } else {
-      var io2 = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { run(e.target); io2.unobserve(e.target); }
-        });
-      }, { threshold: 0.5 });
-      nums.forEach(function (el) { io2.observe(el); });
-    }
-  }
+    var revealVisible = function () {
+      var line = window.innerHeight * 0.92;
+      for (var i = rvs.length - 1; i >= 0; i--) {
+        if (rvs[i].getBoundingClientRect().top < line) {
+          rvs[i].classList.add('in');
+          rvs.splice(i, 1);
+        }
+      }
+      if (!rvs.length) {
+        window.removeEventListener('scroll', onReveal);
+        window.removeEventListener('resize', onReveal);
+      }
+    };
+    var last = 0;
+    var onReveal = function () {
+      var now = Date.now();
+      if (now - last < 80) return;
+      last = now;
+      revealVisible();
+    };
 
-  /* ---- roadmap timeline: draw the progress line + light nodes ---- */
-  var tl = document.querySelector('.timeline');
-  if (tl) {
-    if (reduce || !('IntersectionObserver' in window)) {
-      tl.classList.add('lit');
+    if (reduce) {
+      revealAll();
     } else {
-      var tlio = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add('lit'); tlio.unobserve(e.target); }
-        });
-      }, { threshold: 0.3 });
-      tlio.observe(tl);
+      revealVisible();
+      window.addEventListener('scroll', onReveal, { passive: true });
+      window.addEventListener('resize', onReveal);
+      window.addEventListener('load', revealVisible);
+      /* 안전장치: 어떤 이유로든 못 켰으면 3초 뒤 전부 보이게 합니다 */
+      setTimeout(function () { if (rvs.length) revealAll(); }, 3000);
     }
   }
 
   /* ============================================================
-     HERO — 하루의 빛
-     해와 달이 하나의 타원 궤도를 정반대 지점에서 함께 돕니다.
-     하늘색은 12개 시간대 사이를 오가고, 화면 아래쪽은 다음 섹션
-     배경색으로 녹아들어 히어로와 본문 사이 경계선을 없앱니다.
+     히어로 — 하루의 빛
+     해와 달이 하나의 타원 궤도에서 정반대 지점을 함께 돕니다.
+     하늘색은 12개 시간대 사이를 오가고, 화면 아래쪽은 본문 패널
+     색으로 녹아들어 히어로와 본문 사이 경계선을 없앱니다.
      ============================================================ */
   var sky = document.getElementById('skyfield');
   if (sky && sky.getContext) {
     var sctx = sky.getContext('2d');
     var sdpr = Math.min(window.devicePixelRatio || 1, 2);
-    var SW = 0, SH = 0, sframe = 0, tod = 7.4;      // tod: 0~24 시각
-    var DAY_SEC = 90;                                // 하루 한 바퀴에 걸리는 시간
-    var GROUND = [11, 13, 19];                       // .page-body 위쪽이 얹히는 어두운 색
+    var SW = 0, SH = 0, sframe = 0, tod = 7.4;
+    var DAY_SEC = 90;
+    var GROUND = [11, 13, 19];
 
     var SKY_KEYS = [
       [0.0,  '#050813', '#080c1c', '#0d1428'],
@@ -193,10 +178,8 @@
       g.addColorStop(1, rgba(pal.c, 1));
       sctx.fillStyle = g; sctx.fillRect(0, 0, w, h);
 
-      // 해와 달: 같은 궤도의 정반대 지점. 문장을 피해 오른쪽에 둡니다.
       var th = Math.PI * (tod - 6) / 12;
-      // 넓은 화면: 오른쪽 여백을 도는 큰 궤도.
-      // 좁은 화면: 문장 위쪽만 지나는 얕은 궤도 (글씨를 가리지 않게).
+      // 넓은 화면은 오른쪽 여백을 도는 큰 궤도, 좁은 화면은 문장 위를 지나는 얕은 궤도
       var narrow = w < 760;
       var cx = w * (narrow ? 0.50 : 0.82);
       var rx = w * (narrow ? 0.36 : 0.16);
@@ -259,7 +242,6 @@
         sctx.fillStyle = hg;
         sctx.beginPath(); sctx.arc(sunX, sunY, 320, 0, Math.PI * 2); sctx.fill();
 
-        // 지평선에 가까울수록 살짝 눌린 모양 (대기 굴절)
         var squash = 1 - 0.22 * (1 - clamp(sunAlt * 4, 0, 1));
         sctx.save();
         sctx.translate(sunX, sunY); sctx.scale(1, squash); sctx.translate(-sunX, -sunY);
@@ -283,19 +265,18 @@
 
       for (i = 0; i < clouds.length; i++) {
         var cl = clouds[i];
-        var x = ((cl.x + sframe * cl.sp) % 1.25 - 0.12) * w, y = cl.y * h;
+        var x = ((cl.x + sframe * cl.sp) % 1.25 - 0.12) * w, cyy = cl.y * h;
         var tint = mixc(pal.b, dusk > 0.25 ? CLOUD_DUSK : CLOUD_DAY, 0.55);
-        var ccg = sctx.createRadialGradient(x, y, 0, x, y, cl.w * w);
+        var ccg = sctx.createRadialGradient(x, cyy, 0, x, cyy, cl.w * w);
         ccg.addColorStop(0, rgba(tint, cl.a * (0.5 + dusk * 0.9)));
         ccg.addColorStop(1, rgba(tint, 0));
         sctx.save();
-        sctx.translate(x, y); sctx.scale(1, cl.h / cl.w); sctx.translate(-x, -y);
+        sctx.translate(x, cyy); sctx.scale(1, cl.h / cl.w); sctx.translate(-x, -cyy);
         sctx.fillStyle = ccg;
-        sctx.beginPath(); sctx.arc(x, y, cl.w * w, 0, Math.PI * 2); sctx.fill();
+        sctx.beginPath(); sctx.arc(x, cyy, cl.w * w, 0, Math.PI * 2); sctx.fill();
         sctx.restore();
       }
 
-      // 아래쪽은 본문 패널 색으로 녹아듭니다 (경계선 제거)
       var fg = sctx.createLinearGradient(0, horizon - h * 0.30, 0, h);
       fg.addColorStop(0, rgba(GROUND, 0));
       fg.addColorStop(0.42, rgba(GROUND, 0.30));
@@ -324,25 +305,26 @@
     window.addEventListener('resize', function () {
       clearTimeout(sky._rt); sky._rt = setTimeout(skyResize, 180);
     });
-    if (!reduce) requestAnimationFrame(skyLoop);   // reduce 면 위에서 그린 한 장만 유지
+    if (!reduce) requestAnimationFrame(skyLoop);
   }
 
-  /* ---- contact form (static site → composes an email) ---- */
+  /* ---- 문의 폼 (서버가 없어 메일 앱을 띄웁니다) ---- */
   var form = document.getElementById('contactForm');
   if (form) {
     var ok = form.querySelector('.form-ok');
-    var setInvalid = function (field, bad) { field.classList.toggle('invalid', bad); };
     form.addEventListener('submit', function (ev) {
       ev.preventDefault();
       var valid = true;
-      form.querySelectorAll('[data-validate]').forEach(function (input) {
+      var required = form.querySelectorAll('[data-validate]');
+      for (var i = 0; i < required.length; i++) {
+        var input = required[i];
         var field = input.closest('.field');
         var v = (input.value || '').trim();
         var bad = !v;
         if (input.type === 'email' && v) bad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-        setInvalid(field, bad);
+        if (field) field.classList.toggle('invalid', bad);
         if (bad) valid = false;
-      });
+      }
       var agree = form.querySelector('#agree');
       if (agree && !agree.checked) { valid = false; agree.closest('.check').style.color = '#d63b53'; }
       else if (agree) { agree.closest('.check').style.color = ''; }

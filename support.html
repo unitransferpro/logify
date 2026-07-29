@@ -11,36 +11,21 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/styles.css?v=5">
+<link rel="stylesheet" href="assets/styles.css?v=7">
 </head>
 <body>
-<div class="aurora" aria-hidden="true"><i></i></div>
-<div class="grain" aria-hidden="true"></div>
-
-<header class="nav" id="top">
-  <div class="nav-inner">
-    <a class="brand" href="index.html" aria-label="Logify 홈"><span class="b-log">Log</span><span class="b-ify">ify</span></a>
-    <nav aria-label="주요 메뉴">
-      <ul class="nav-links">
-        <li><a href="products.html">서비스</a></li>
-        <li><a href="about.html">회사 소개</a></li>
-        <li><a href="support.html" class="active">고객지원</a></li>
-        <li><a href="contact.html">문의</a></li>
-      </ul>
-    </nav>
-    <div class="nav-right">
-      <a class="btn btn-accent nav-cta" href="contact.html">제휴 문의</a>
-      <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navMobile">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="index.html" aria-label="Logify 홈">Log<i>ify</i></a>
+    <nav class="menu" aria-label="주요 메뉴"><a href="products.html">서비스</a><a href="about.html">회사 소개</a><a href="support.html" class="on">고객지원</a><a href="contact.html">문의</a></nav>
+    <a class="btn btn-accent" href="contact.html">제휴 문의</a>
+    <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navSheet">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  <div class="nav-mobile" id="navMobile">
+  <div class="nav-sheet" id="navSheet">
     <a href="products.html">서비스</a>
     <a href="about.html">회사 소개</a>
     <a href="support.html">고객지원</a>
@@ -48,137 +33,98 @@
     <a class="btn btn-accent" href="contact.html">제휴 문의</a>
   </div>
 </header>
-
-<main>
-<section class="page-hero">
-  <div class="container">
-    <span class="eyebrow">Support</span>
+<section class="page-head">
+  <div class="wrap">
+    <div class="eyebrow">Support</div>
     <h1>무엇을 도와드릴까요?</h1>
-    <p class="lede">앱을 쓰다가 생긴 문제를 가장 빠르게 해결하는 곳입니다.
-      원하는 답이 없으면 아래 창구로 바로 연락 주세요.</p>
+    <p>앱을 쓰다가 생긴 문제를 가장 빠르게 해결하는 곳입니다. 원하는 답이 없으면 아래 창구로 바로 연락 주세요.</p>
   </div>
 </section>
 
-<section class="section-tight">
-  <div class="container">
-    <div class="section-head rv" style="margin-bottom:26px">
-      <h2 class="h-section" style="font-size:clamp(1.5rem,2.6vw,2rem)">앱을 선택해 주세요</h2>
-    </div>
+<section class="section tight">
+  <div class="wrap">
+    <div class="s-head rv" style="margin-bottom:34px;"><h2 style="font-size:28px;">앱을 선택해 주세요</h2></div>
     <div class="sup-grid">
-      <a class="sup-card rv" style="--hue:var(--h-pyeonip)" href="app-pyeoniplog.html">
-        <div class="ic"></div><b>편입로그</b><span>교육 · 커뮤니티</span>
-      </a>
-      <a class="sup-card rv" style="--hue:var(--h-meet)" href="app-meetlog.html">
-        <div class="ic"></div><b>meetlog</b><span>소셜 · 데이팅</span>
-      </a>
-      <a class="sup-card rv" style="--hue:var(--h-tee)" href="app-lasttee.html">
-        <div class="ic"></div><b>LastTee</b><span>골프 · 마켓플레이스</span>
-      </a>
-      <a class="sup-card rv" style="--hue:var(--h-pet)" href="app-petlog.html">
-        <div class="ic"></div><b>펫로그</b><span>펫 · 공공데이터</span>
-      </a>
+      <a class="sup rv" style="--hue:var(--h-pyeonip)" href="app-pyeoniplog.html"><div class="ic"></div><b>편입로그</b><span>교육 · 커뮤니티</span></a>
+      <a class="sup rv" style="--hue:var(--h-pet)" href="app-petlog.html"><div class="ic"></div><b>펫로그</b><span>펫 · 공공데이터</span></a>
+      <a class="sup rv" style="--hue:var(--h-tee)" href="app-lasttee.html"><div class="ic"></div><b>LastTee</b><span>골프 · 마켓플레이스</span></a>
+      <a class="sup rv" style="--hue:var(--h-meet)" href="app-meetlog.html"><div class="ic"></div><b>meetlog</b><span>소셜 · 데이팅</span></a>
     </div>
   </div>
 </section>
 
-<section class="section-tight">
-  <div class="container">
-    <div class="section-head rv" style="margin-bottom:22px">
-      <span class="eyebrow">FAQ</span>
-      <h2 class="h-section" style="font-size:clamp(1.5rem,2.6vw,2rem)">자주 묻는 질문</h2>
-    </div>
-    <p class="notice rv"><b>안내</b>
-      아래 질문과 답변은 <strong>예시</strong>입니다. 실제 운영 기준을 정리하는 중이며,
-      확정되면 이 페이지를 갱신합니다. 급한 문의는 service@logify.co.kr 로 보내주세요.</p>
-    <div class="faq rv">
-      <details open>
-        <summary><span class="q">Q</span>계정을 삭제하고 싶어요.<span class="sample">예시</span></summary>
-        <div class="a">각 앱의 설정에서 계정 삭제를 요청할 수 있습니다. 앱에 접속할 수 없다면 service@logify.co.kr 로 가입하신 이메일과 함께 알려주시면 확인 후 처리해 드립니다.</div>
-      </details>
-      <details>
-        <summary><span class="q">Q</span>결제를 취소하고 환불받고 싶습니다.<span class="sample">예시</span></summary>
-        <div class="a">현재 유료 결제를 운영하는 앱이 없습니다. 결제 기능이 열리면 환불 기준을 이 페이지와 이용약관에 함께 안내합니다.</div>
-      </details>
-      <details>
-        <summary><span class="q">Q</span>부적절한 게시물이나 사용자를 신고하려면?<span class="sample">예시</span></summary>
-        <div class="a">커뮤니티 기능이 있는 앱에서는 게시물과 프로필에서 신고할 수 있습니다. 접수된 신고는 확인 후 조치하며, 처리 기준은 운영정책으로 정리해 공개할 예정입니다.</div>
-      </details>
-      <details>
-        <summary><span class="q">Q</span>알림이 오지 않습니다.<span class="sample">예시</span></summary>
-        <div class="a">기기 설정에서 해당 앱의 알림 권한이 꺼져 있는지 먼저 확인해 주세요. 권한이 켜져 있는데도 오지 않으면 사용 기기와 앱 이름을 적어 문의해 주시면 확인해 드립니다.</div>
-      </details>
-      <details>
-        <summary><span class="q">Q</span>문의하면 언제 답을 받을 수 있나요?<span class="sample">예시</span></summary>
-        <div class="a">평일 기준으로 보통 1영업일 이내에 답장드립니다. 주말과 공휴일에는 다음 영업일에 순차적으로 답변드립니다.</div>
-      </details>
+<section class="section tight">
+  <div class="wrap">
+    <div style="display:grid; grid-template-columns:1.45fr .55fr; gap:40px; align-items:start;" class="doc-cols">
+      <div>
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:22px;">
+          <h2 style="font-size:24px; font-weight:800; letter-spacing:-.02em; margin:0;">자주 묻는 질문</h2>
+        </div>
+        <p class="notice"><b>안내</b>아래 질문과 답변은 <strong>예시</strong>입니다.
+          실제 운영 기준을 정리하는 중이며, 확정되면 이 페이지를 갱신합니다.
+          급한 문의는 service@logify.co.kr 로 보내주세요.</p>
+        <div class="faq">
+          <details open>
+            <summary><i>Q</i><span>계정을 삭제하고 싶어요.</span><span class="sample">예시</span></summary>
+            <div class="a">각 앱의 설정에서 계정 삭제를 요청할 수 있습니다. 앱에 접속할 수 없다면 service@logify.co.kr 로 가입하신 이메일과 함께 알려주시면 확인 후 처리해 드립니다.</div>
+          </details>
+          <details>
+            <summary><i>Q</i><span>결제를 취소하고 환불받고 싶습니다.</span><span class="sample">예시</span></summary>
+            <div class="a">현재 유료 결제를 운영하는 앱이 없습니다. 결제 기능이 열리면 환불 기준을 이 페이지와 이용약관에 함께 안내합니다.</div>
+          </details>
+          <details>
+            <summary><i>Q</i><span>부적절한 게시물이나 사용자를 신고하려면?</span><span class="sample">예시</span></summary>
+            <div class="a">커뮤니티 기능이 있는 앱에서는 게시물과 프로필에서 신고할 수 있습니다. 접수된 신고는 확인 후 조치하며, 처리 기준은 운영정책으로 정리해 공개할 예정입니다.</div>
+          </details>
+          <details>
+            <summary><i>Q</i><span>알림이 오지 않습니다.</span><span class="sample">예시</span></summary>
+            <div class="a">기기 설정에서 해당 앱의 알림 권한이 꺼져 있는지 먼저 확인해 주세요. 권한이 켜져 있는데도 오지 않으면 사용 기기와 앱 이름을 적어 문의해 주시면 확인해 드립니다.</div>
+          </details>
+          <details>
+            <summary><i>Q</i><span>문의하면 언제 답을 받을 수 있나요?</span><span class="sample">예시</span></summary>
+            <div class="a">평일 기준으로 보통 1영업일 이내에 답장드립니다. 주말과 공휴일에는 다음 영업일에 순차적으로 답변드립니다.</div>
+          </details>
+        </div>
+      </div>
+
+      <div>
+        <div class="info-card"><h4>이메일 문의</h4><p>service@logify.co.kr
+          <small>평일 10:00 - 19:00 · 1영업일 이내 회신</small></p>
+          <a class="btn btn-ink" style="margin-top:18px; width:100%; justify-content:center;" href="contact.html">문의 보내기</a>
+        </div>
+        <div class="info-card"><h4>약관 · 방침</h4>
+          <p style="font-size:15.5px;"><a href="terms.html">이용약관</a> · <a href="privacy.html">개인정보처리방침</a>
+          <small>서비스 이용 조건과 개인정보 처리 기준을 확인하실 수 있습니다.</small></p></div>
+      </div>
     </div>
   </div>
 </section>
-
-<section class="section-tight">
-  <div class="container">
-    <div class="cta-band rv">
-      <span class="eyebrow">Contact</span>
-      <h2>여기서 안 풀리면 바로 물어보세요.</h2>
-      <p>service@logify.co.kr · 평일 10:00 – 19:00 · 보통 1영업일 이내 회신</p>
-      <a class="btn btn-accent" href="contact.html">문의하기 <span class="arr">↗</span></a>
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <div class="logo" style="font-size:22px; margin-bottom:14px;">Log<i>ify</i></div>
+      <p style="margin:0 0 16px; font-size:14px; color:var(--muted); line-height:1.65; max-width:34ch;">
+        당신의 일상을 기록으로 남기는 앱을 만드는 소프트웨어 스튜디오.</p>
+      <div class="corp">상호 로기파이 (Logify)<br>대표 박준하<br>사업자등록번호 328-67-00895<br>서울특별시 서초구 잠원로 166-17, 3동 604호 (잠원동, 강변아파트)<br><a href="mailto:service@logify.co.kr">service@logify.co.kr</a></div>
     </div>
+    <div><h4>서비스</h4><ul><li><a href="app-pyeoniplog.html">편입로그</a></li><li><a href="app-petlog.html">펫로그</a></li><li><a href="app-lasttee.html">LastTee</a></li><li><a href="app-meetlog.html">meetlog</a></li></ul></div>
+    <div><h4>회사</h4><ul>
+      <li><a href="about.html">회사 소개</a></li>
+      <li><a href="products.html">우리가 만든 서비스</a></li>
+      <li><a href="contact.html">문의하기</a></li>
+    </ul></div>
+    <div><h4>지원</h4><ul>
+      <li><a href="support.html">고객지원</a></li>
+      <li><a href="terms.html">이용약관</a></li>
+      <li><a href="privacy.html">개인정보처리방침</a></li>
+    </ul></div>
   </div>
-</section>
-</main>
-
-<footer class="footer">
-  <div class="container">
-    <div class="footer-top">
-      <div class="brand-col">
-        <a class="brand" href="index.html"><span class="b-log">Log</span><span class="b-ify">ify</span></a>
-        <p class="footer-blurb">당신의 일상을 기록으로 남기는 앱을 만드는 소프트웨어 스튜디오.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Services</h4>
-        <ul>
-          <li><a href="app-pyeoniplog.html">편입로그</a></li>
-          <li><a href="app-petlog.html">펫로그</a></li>
-          <li><a href="app-lasttee.html">라스트티</a></li>
-          <li><a href="app-meetlog.html">meetlog</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="index.html#vision">비전</a></li>
-          <li><a href="index.html#apps">서비스</a></li>
-          <li><a href="about.html">회사 소개</a></li>
-            <li><a href="support.html">고객지원</a></li>
-            <li><a href="contact.html">문의하기</a></li>
-          <li><a href="privacy.html">개인정보처리방침</a></li>
-          <li><a href="terms.html">이용약관</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 사업자등록증 -->
-    <div class="biz-reg">
-      <dl><dt>상호</dt><dd>로기파이 (Logify)</dd></dl>
-      <dl><dt>대표</dt><dd>박준하</dd></dl>
-      <dl><dt>사업자등록번호</dt><dd>328-67-00895</dd></dl>
-      <dl><dt>업태</dt><dd>정보통신업</dd></dl>
-      <dl><dt>종목</dt><dd>응용 소프트웨어 개발 및 공급업</dd></dl>
-      <dl><dt>개업일</dt><dd>2026.07.06</dd></dl>
-      <dl><dt>주소</dt><dd>서울특별시 서초구 잠원로 166-17, 3동 604호 (잠원동, 강변아파트)</dd></dl>
-      <dl><dt>이메일</dt><dd><a href="mailto:service@logify.co.kr">service@logify.co.kr</a></dd></dl>
-    </div>
-
-    <div class="footer-legal">
-      <span class="copy">© <span data-year>2026</span> Logify. All rights reserved.</span>
-      <span class="links">
-        <a href="privacy.html">개인정보처리방침</a>
-        <a href="terms.html">이용약관</a>
-        <a href="contact.html">문의</a>
-      </span>
-    </div>
+  <div class="foot-bottom">
+    <span>© <span data-year>2026</span> Logify. All rights reserved.</span>
+    <span><a href="terms.html">이용약관</a></span>
+    <span><a href="privacy.html">개인정보처리방침</a></span>
   </div>
 </footer>
-<script src="assets/app.js?v=5"></script>
+<script src="assets/app.js?v=7"></script>
 </body>
 </html>
