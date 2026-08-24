@@ -464,7 +464,7 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .phone-stage::before{content:"";position:absolute;width:78%;height:66%;border-radius:50%;z-index:0;
   background:radial-gradient(circle,color-mix(in srgb,var(--hue) 42%,transparent),transparent 70%);
   filter:blur(56px);opacity:.8}
-.phone{position:relative;z-index:1;width:clamp(220px,20vw,262px);aspect-ratio:9/19;
+.phone{position:relative;z-index:1;width:clamp(240px,30vw,300px);aspect-ratio:9/19;
   border-radius:42px;padding:11px;background:linear-gradient(150deg,#2a2e39,#0d0f14);
   box-shadow:0 34px 66px -22px rgba(20,28,66,.55),inset 0 0 0 1px rgba(255,255,255,.1),
     inset 0 2px 3px rgba(255,255,255,.18)}
@@ -474,6 +474,12 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .phone-screen img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
 .phone-screen::after{content:"";position:absolute;inset:0;pointer-events:none;
   box-shadow:inset 0 0 22px rgba(0,0,0,.35);border-radius:31px}
+/* 좁은 화면은 단이 하나라 폰을 더 키울 수 있습니다. 대신 무대 여백을 줄여야
+   320px 같은 작은 기기에서 가로로 넘치지 않습니다. */
+@media(max-width:900px){
+  .phone-stage{padding:12px}
+  .phone{width:min(300px,74vw)}
+}
 .phone .float-tag{position:absolute;z-index:4;top:22px;right:-14px;
   font-family:var(--f-mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
   color:#fff;background:var(--hue);padding:.4em .7em;border-radius:var(--pill);
