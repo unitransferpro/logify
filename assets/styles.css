@@ -15,11 +15,13 @@
   --accent-ink:#2c46b8;
   --accent-soft:#e9edff;
 
-  /* per-app hues (used only inside the apps grid) */
-  --h-pyeonip:#12a594;
-  --h-meet:#ec4f7e;
-  --h-tee:#e8912a;
-  --h-pet:#8b5cf6;
+  /* 앱별 색 — 각 앱 화면에서 실제 쓰는 색에 맞춥니다. 원색 그대로는
+     대비가 모자라(라임 #d6f94b 는 흰 글씨 대비 1.2) 배지와 굵은 글씨에서
+     안 읽혀서, 색상은 두고 명도만 낮춘 값입니다. */
+  --h-pyeonip:#33409e;   /* 편입로그 · 남색 */
+  --h-meet:#ec4f7e;      /* meetlog · 분홍 */
+  --h-tee:#1f7a4d;       /* 라스트티 · 초록 */
+  --h-pet:#e85c2c;       /* 펫로그 · 주황 */
 
   /* glass */
   --glass:rgba(255,255,255,.55);
@@ -568,11 +570,14 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}
 .tags span{padding:.5em 1em;border-radius:var(--pill);border:1px solid var(--line);
   background:#fff;font-size:.86rem;font-weight:500;color:var(--ink-2)}
-.feat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:16px}
+/* 카드가 앱마다 3개 또는 4개라 열 수를 고정하지 않습니다 */
+.feat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px;margin-top:16px}
 .feat-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);
   overflow:hidden;box-shadow:var(--sh-2)}
-.feat-card .band{height:96px;background:linear-gradient(160deg,var(--hue),rgba(255,255,255,.9))}
-.feat-card .txt{padding:22px 24px 26px}
+/* 예전에는 96px 색 덩어리였는데 자리만 차지하고 알려주는 게 없어
+   카드가 비어 보였습니다. 얇은 강조선으로 줄입니다. */
+.feat-card .band{height:5px;background:var(--hue)}
+.feat-card .txt{padding:24px 24px 26px}
 .feat-card h3{font-size:1.12rem;margin-bottom:8px}
 .feat-card p{margin:0;font-size:.94rem;color:var(--muted);line-height:1.7}
 
