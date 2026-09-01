@@ -401,7 +401,7 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .hours li:last-child{border-bottom:0}
 .hours .d{color:var(--ink)}
 
-.form-card{padding:clamp(26px,3vw,38px);border-radius:var(--radius);
+.form-card{scroll-margin-top:104px;padding:clamp(26px,3vw,38px);border-radius:var(--radius);
   background:var(--glass-strong);border:1px solid var(--glass-border);box-shadow:var(--sh-2);
   -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -470,7 +470,10 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
     inset 0 2px 3px rgba(255,255,255,.18)}
 .phone::before{content:"";position:absolute;top:17px;left:50%;transform:translateX(-50%);
   width:62px;height:7px;border-radius:5px;background:#08090c;z-index:3}
-.phone-screen{position:relative;width:100%;height:100%;border-radius:31px;overflow:hidden;background:#000}
+/* 이미지가 지연 로딩이라 뜨기 전까지 이 배경이 보입니다. 검정이면 화면이 꺼진 게 아니라
+   깨진 것처럼 보여서(느린 회선에서 1~2초 그렇습니다) 앱 색을 옅게 깐 판으로 둡니다. */
+.phone-screen{position:relative;width:100%;height:100%;border-radius:31px;overflow:hidden;
+  background:#e7ebf3;background:color-mix(in srgb,var(--hue,#8892a6) 10%,#e7ebf3)}
 .phone-screen img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
 .phone-screen::after{content:"";position:absolute;inset:0;pointer-events:none;
   box-shadow:inset 0 0 22px rgba(0,0,0,.35);border-radius:31px}
@@ -588,7 +591,8 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .feat-card p{margin:0;font-size:.94rem;color:var(--muted);line-height:1.7}
 
 /* 고객지원 */
-.sup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+/* 앱이 늘거나 빠져도 남는 칸 없이 채우도록 열 수를 고정하지 않습니다 */
+.sup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
 .sup-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);
   padding:26px 22px;text-align:center;box-shadow:var(--sh-1);transition:transform .18s ease,box-shadow .2s ease}
 .sup-card:hover{transform:translateY(-3px);box-shadow:var(--sh-2)}
@@ -624,7 +628,7 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 @media(max-width:900px){
   .detail-top{grid-template-columns:1fr;gap:36px}
   .feat-cards{grid-template-columns:1fr}
-  .sup-grid{grid-template-columns:1fr 1fr}
+  .sup-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
 }
 
 /* ---------- responsive ---------- */

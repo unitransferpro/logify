@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/styles.css?v=15">
+<link rel="stylesheet" href="assets/styles.css?v=16">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i></div>
@@ -115,16 +115,28 @@
               <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="선택 입력">
             </div>
           </div>
-          <div class="field">
-            <label for="topic">문의 유형</label>
-            <select id="topic" name="topic">
-              <option value="제휴·협업">제휴 · 협업</option>
-              <option value="투자">투자</option>
-              <option value="서비스 문의">서비스 문의</option>
-              <option value="채용">채용</option>
-              <option value="아이디어 제안">아이디어 제안</option>
-              <option value="기타">기타</option>
-            </select>
+          <div class="form-row">
+            <div class="field">
+              <label for="app">문의할 앱</label>
+              <select id="app" name="app">
+                <option value="">해당 없음 · 일반 문의</option>
+                <option value="pyeoniplog">편입로그</option>
+                <option value="petlog">펫로그</option>
+                <option value="lasttee">라스트티</option>
+                <option value="meetlog">meetlog</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="topic">문의 유형</label>
+              <select id="topic" name="topic">
+                <option value="제휴·협업">제휴 · 협업</option>
+                <option value="투자">투자</option>
+                <option value="서비스 문의">서비스 문의</option>
+                <option value="채용">채용</option>
+                <option value="아이디어 제안">아이디어 제안</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
           </div>
           <div class="field">
             <label for="message">메시지 <span class="req">*</span></label>
@@ -199,6 +211,6 @@
   </div>
 </footer>
 
-<script src="assets/app.js?v=15"></script>
+<script src="assets/app.js?v=16"></script>
 </body>
 </html>

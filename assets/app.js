@@ -331,7 +331,28 @@
   var form = document.getElementById('contactForm');
   if (form) {
     var ok = form.querySelector('.form-ok');
+    var appSel = form.querySelector('#app');
     var setInvalid = function (field, bad) { field.classList.toggle('invalid', bad); };
+
+    /* 고객지원에서 앱을 고르고 오면(contact.html?app=...) 그 앱으로 폼을 맞춰 둡니다.
+       앱 이름을 여기 적어두지 않고 select 의 option 을 훑습니다. 앱이 늘거나 빠져도
+       HTML 만 고치면 되고, 이 코드는 그대로 둡니다. */
+    var want = (location.search.match(/[?&]app=([^&]*)/) || [])[1];
+    if (appSel && want) {
+      want = decodeURIComponent(want).toLowerCase();
+      for (var oi = 0; oi < appSel.options.length; oi++) {
+        if (appSel.options[oi].value.toLowerCase() === want && want) {
+          appSel.selectedIndex = oi;
+          var tp = form.querySelector('#topic');
+          if (tp) tp.value = '서비스 문의';
+          // 히어로가 제휴 이야기라 그냥 두면 잘못 온 줄 압니다. 폼까지 내려 줍니다.
+          setTimeout(function () {
+            form.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+          }, 80);
+          break;
+        }
+      }
+    }
     form.addEventListener('submit', function (ev) {
       ev.preventDefault();
       var valid = true;
@@ -349,13 +370,16 @@
       if (!valid) return;
 
       var g = function (n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ''; };
-      var subject = '[Logify 문의] ' + (g('topic') || '일반 문의') + ' — ' + g('name');
+      var appName = (appSel && appSel.value) ? appSel.options[appSel.selectedIndex].text : '';
+      var subject = '[Logify 문의] ' + (appName ? appName + ' · ' : '') +
+        (g('topic') || '일반 문의') + ' — ' + g('name');
       var body = [
         '이름: ' + g('name'),
         '회사/소속: ' + (g('company') || '-'),
         '이메일: ' + g('email'),
         '연락처: ' + (g('phone') || '-'),
         '문의 유형: ' + (g('topic') || '-'),
+        '문의할 앱: ' + (appName || '-'),
         '',
         g('message')
       ].join('\n');
