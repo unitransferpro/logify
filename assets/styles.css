@@ -575,6 +575,12 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .store-btn{display:inline-flex;align-items:center;gap:.6em;padding:.82em 1.4em;
   border-radius:var(--pill);background:rgba(13,15,20,.06);border:1px dashed var(--line);
   color:var(--faint);font-weight:600;font-size:.95rem;cursor:default}
+.store-btn.is-live{background:var(--ink);color:#fff;border:1px solid var(--ink);cursor:pointer;
+  box-shadow:var(--sh-2);transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.store-btn.is-live:hover{transform:translateY(-2px);box-shadow:var(--sh-3);background:#000}
+.store-btn.is-live:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.store-btn.is-live .arr{transition:transform .2s ease}
+.store-btn.is-live:hover .arr{transform:translate(3px,-3px)}
 .store-note{width:100%;font-size:.82rem;color:var(--faint);margin:2px 0 0}
 .tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}
 .tags span{padding:.5em 1em;border-radius:var(--pill);border:1px solid var(--line);
