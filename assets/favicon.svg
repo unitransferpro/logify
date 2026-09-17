@@ -1,6 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#0d0f14"/>
-  <rect x="18" y="15" width="8.5" height="30" rx="2" fill="#ffffff"/>
-  <rect x="18" y="36.5" width="21" height="8.5" rx="2" fill="#ffffff"/>
-  <circle cx="43.5" cy="20" r="6" fill="#3b5bdb"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- 배경을 원으로 둔다. 구글 검색 결과와 안드로이드 홈 화면은 아이콘을 안쪽으로
+       살짝 넣은 뒤 원형으로 마스킹하는데, 사각형(둥근 모서리 포함)이면 대각선 쪽에
+       흰 여백이 남는다. 원은 어떻게 합성하든 꽉 찬다.
+       iOS apple-touch-icon 은 반대로 정사각형이어야 한다(OS 가 직접 둥글린다). -->
+  <circle cx="32" cy="32" r="32" fill="#0d0f14"/>
+  <!-- 마크 bbox 중심이 (33.75,29.5) 라 캔버스 중심 (32,32) 으로 옮긴다.
+       옮긴 뒤 중심에서 가장 먼 점이 22.1 로, 반지름 32 원 안에 여유 있게 들어간다. -->
+  <g transform="translate(-1.75,2.5)">
+    <rect x="18" y="15" width="8.5" height="30" rx="2" fill="#ffffff"/>
+    <rect x="18" y="36.5" width="21" height="8.5" rx="2" fill="#ffffff"/>
+    <circle cx="43.5" cy="20" r="6" fill="#3b5bdb"/>
+  </g>
 </svg>
