@@ -23,7 +23,7 @@
    → 설계 방향은 **6번 항목**에 정리해 뒀습니다. 만들기 전에 꼭 읽어 주세요.
 
 즉 지금은 정적 사이트지만, **기능이 계속 붙는 전제**로 코드를 짜세요.
-새 페이지를 추가할 땐 기존 HTML 과 같은 구조(나브 · 푸터 · `?v=` 캐시버스트)를 그대로 따릅니다.
+새 페이지를 추가할 땐 기존 HTML 과 같은 구조(나브 · 푸터 · `?v=` 캐시버스트)를 그대로 따르고, `sitemap.xml` 에도 한 줄 넣습니다.
 
 ---
 
@@ -47,6 +47,8 @@ assets/
   favicon-2.svg 파비콘 (?v= 를 붙이지 않습니다. 3번 항목 끝 참고)
   shots/        앱 스크린샷 (phone mockup 안에 들어가는 이미지)
 .nojekyll       GitHub Pages 의 Jekyll 처리 비활성화 (지우지 마세요)
+sitemap.xml     검색엔진에 알려주는 페이지 목록 (네이버 서치어드바이저·구글에 제출). 페이지를 더하거나 빼면 같이 고칩니다
+robots.txt      크롤러 안내. 사이트맵 위치만 적혀 있습니다
 ```
 
 **빌드 도구·프레임워크·npm 의존성이 전혀 없습니다.** 파일 수정 → 새로고침 끝.
@@ -136,6 +138,8 @@ fetch(url + '?t=' + Date.now(), {cache:'reload'})
 - A 레코드 4개: `@` → `185.199.108.153` / `.109.153` / `.110.153` / `.111.153` (GitHub Pages)
 - `www` CNAME → `unitransferpro.github.io.` (`www` 는 apex 로 301)
 - `google-site-verification` TXT 레코드 (구글 서치콘솔) — **지우지 마세요**
+- `index.html` `<head>` 의 `naver-site-verification` 메타 태그 (네이버 서치어드바이저, 2026-09-28) — **지우지 마세요.**
+  네이버는 DNS 가 아니라 이 태그로 사이트 주인을 확인합니다. 지우면 네이버 웹마스터도구 권한이 풀립니다.
 - 저장소 루트 `CNAME` 파일 (내용 `logify.co.kr`) — GitHub 이 자동 생성. **지우지 마세요.** 지우면 커스텀 도메인이 풀립니다.
 - HTTPS: Pages `https_enforced=true`. 인증서는 GitHub 이 무료 발급 · 자동 갱신 (손댈 것 없음)
 
@@ -238,13 +242,14 @@ GitHub Pages 는 정적 호스팅이라 백엔드가 없습니다. 그래서 관
 (2026-07-28: meta description 에 남아 있던 **대시부스터**는 우리 앱이 아니어서 삭제했고, `styles.css` 의 미사용 `--h-dash` 변수도 함께 정리했습니다.)
 (2026-07-29: **펫시세 → 펫로그** 로 이름이 바뀌었습니다. 옛 이름 `펫시세` 는 되살리지 마세요.)
 
-앱을 추가 · 제거할 땐 **다섯 곳을 같이** 맞추세요. 한 곳만 고치면 또 어긋납니다.
+앱을 추가 · 제거할 땐 **여섯 곳을 같이** 맞추세요. 한 곳만 고치면 또 어긋납니다.
 
 1. `index.html` 의 앱 소개 섹션 (`article.app-feature`)
 2. `index.html` 의 meta description
 3. 통계의 `data-count="4"` (운영 중인 서비스 개수)
 4. 루트 HTML 전부의 푸터 `Services` 링크 목록 (`grep -l 'Services' *.html` 로 대상 확인)
 5. 그 앱의 상세 페이지 `app-앱이름.html` 과 `products.html` 의 목록
+6. `sitemap.xml` 의 `<url>` 줄 (없는 페이지가 남아 있으면 네이버·구글이 404 를 보고, 새 페이지는 제출이 안 됩니다)
 
 앱마다 고유 색은 `styles.css` 의 `:root` 에 `--h-앱이름` 으로 정의하고, `article.app-feature` 의 `style="--hue:var(--h-앱이름)"` 로 연결합니다. **앱을 빼면 그 변수도 지우세요.**
 
