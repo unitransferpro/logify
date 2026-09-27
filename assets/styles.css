@@ -151,9 +151,11 @@ h1,h2,h3{font-family:var(--f-display);font-weight:700;line-height:1.05;
   transition:background-color .3s ease,box-shadow .3s ease}
 .nav.scrolled .nav-inner{background:var(--glass-strong);
   box-shadow:var(--sh-3),inset 0 1px 0 rgba(255,255,255,.9)}
-/* 워드마크는 Pretendard 800. Space Grotesk 로 쓰면 우리 로고가 아닙니다. */
-.brand{display:inline-flex;align-items:baseline;gap:0;font-family:var(--f-body);
-  font-weight:800;font-size:24px;letter-spacing:-0.03em;line-height:1;padding:2px 4px}
+/* 워드마크는 공식 로고와 같은 Poppins ExtraBold, 자간 -0.0216em. 로고 영상 마지막 프레임과
+   겹침 0.98 로 맞춘 값입니다(2026-09-28). 그 전에는 Pretendard 800 이었는데 공식 로고 파일과
+   글자 모양이 달라서 바꿨습니다. 글꼴은 HTML 마다 text=Logify 로 여섯 글자만 받습니다. */
+.brand{display:inline-flex;align-items:baseline;gap:0;font-family:'Poppins',var(--f-body);
+  font-weight:800;font-size:24px;letter-spacing:-0.0216em;line-height:1;padding:2px 4px}
 .brand .b-log{color:var(--ink)}
 .brand .b-ify{color:var(--accent)}
 .brand:focus-visible{outline:3px solid var(--accent);outline-offset:4px;border-radius:8px}
@@ -338,16 +340,31 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .app-meta{font-family:var(--f-mono);font-size:.7rem;color:var(--faint);letter-spacing:.04em}
 
 /* ---------- CTA band ---------- */
+/* 띠 배경은 로고 영상과 같은 검정 단색입니다. 영상 배경(#0d0d15)이 파일에 박혀 있어서, 이 색이
+   달라지면 인트로 때 영상 테두리가 네모로 보입니다. 영상을 바꾸면 같이 맞추세요. */
 .cta-band{position:relative;overflow:hidden;border-radius:32px;padding:clamp(44px,6vw,80px);
-  background:linear-gradient(135deg,#12142099,#0d0f14);color:#fff;box-shadow:var(--sh-3);
-  border:1px solid rgba(255,255,255,.08)}
-.cta-band::after{content:"";position:absolute;width:60%;height:200%;right:-10%;top:-50%;
-  background:radial-gradient(circle,rgba(59,91,219,.55),transparent 62%);filter:blur(20px)}
+  background:#0d0d15;color:#fff;box-shadow:var(--sh-3)}
 .cta-band>*{position:relative;z-index:1}
 .cta-band h2{font-size:clamp(1.9rem,4vw,3rem);color:#fff;max-width:20ch}
 .cta-band p{color:rgba(255,255,255,.72);margin:18px 0 32px;max-width:52ch;font-size:1.1rem}
 .cta-band .eyebrow{color:#93a6ff}
 .cta-band .eyebrow::before,.cta-band .eyebrow::after{color:#93a6ff}
+/* 홈·회사 소개 띠의 로고 인트로(app.js). JS 가 .intro 를 붙일 때만 문구를 숨기므로
+   스크립트가 없거나 움직임 줄이기를 켠 사람에게는 문구가 처음부터 보입니다. */
+.cta-band .cta-logo{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:contain;
+  pointer-events:none;opacity:0;visibility:hidden}
+.cta-band .cta-logo::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
+.cta-band.intro .cta-logo{opacity:1;visibility:visible}
+.cta-band.intro>:not(.cta-logo){opacity:0;transform:translateY(26px)}
+/* 속도는 사이트의 다른 등장(.rv: 0.7초, 같은 곡선, 0.08초 간격)에 맞춥니다.
+   로고는 처음에 빨리 옅어지는 곡선으로 빠져서, 0.3초 뒤 문구가 올라올 땐 거의 안 보입니다. */
+.cta-band.intro.done .cta-logo{opacity:0;visibility:hidden;transform:scale(.92);
+  transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1),visibility 0s linear .7s}
+.cta-band.intro.done>:not(.cta-logo){opacity:1;transform:none;
+  transition:opacity .7s ease .3s,transform .7s cubic-bezier(.2,.7,.2,1) .3s}
+.cta-band.intro.done>:nth-child(3){transition-delay:.38s}
+.cta-band.intro.done>:nth-child(4){transition-delay:.46s}
+.cta-band.intro.done>:nth-child(5){transition-delay:.54s}
 
 /* ---------- FOOTER ---------- */
 .footer{margin-top:20px;border-top:1px solid var(--line);
@@ -602,7 +619,14 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .sup-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);
   padding:26px 22px;text-align:center;box-shadow:var(--sh-1);transition:transform .18s ease,box-shadow .2s ease}
 .sup-card:hover{transform:translateY(-3px);box-shadow:var(--sh-2)}
-.sup-card .ic{width:44px;height:44px;border-radius:13px;margin:0 auto 14px;background:var(--hue);opacity:.18}
+/* 앱 아이콘. 파일은 assets/apps/<슬러그>.png (꽉 찬 정사각형), 모서리는 여기서 똑같이 둥글립니다.
+   아이콘이 아직 없는 앱은 .ic-letter 로 앱 색 타일에 첫 글자를 씁니다. */
+.sup-card .ic{width:52px;height:52px;border-radius:12px;margin:0 auto 14px;overflow:hidden;
+  box-shadow:0 0 0 1px var(--line)}
+.sup-card .ic img{display:block;width:100%;height:100%}
+.sup-card .ic-letter{display:flex;align-items:center;justify-content:center;color:#fff;
+  font:800 26px/1 var(--f-body);background:var(--hue);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--hue) 78%,#fff),var(--hue))}
 .sup-card b{display:block;font-size:1.05rem}
 .sup-card span{font-size:.86rem;color:var(--muted)}
 .notice{display:block;padding:16px 20px;border-radius:var(--radius-sm);

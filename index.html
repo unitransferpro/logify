@@ -10,6 +10,11 @@
 <meta property="og:description" content="당신의 일상을 log 합니다.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://logify.co.kr/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logify 로고와 '당신의 일상을 log 합니다' 문구">
+<meta name="twitter:card" content="summary_large_image">
 <!-- 네이버 서치어드바이저 소유확인(2026-09-28). 지우면 네이버 웹마스터도구에서 사이트 권한이 풀립니다.
      네이버가 준 줄을 글자 그대로 둡니다. 값은 공개용이라 비밀값이 아닙니다. -->
 <meta name="naver-site-verification" content="f80819903c29a665634422d4e3fdfcdcbf913bdd" />
@@ -18,8 +23,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- 사이트 로고(.brand) 전용. 공식 로고 글꼴이라 "Logify" 여섯 글자만 받습니다(text=). -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&text=Logify&display=block" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/styles.css?v=17">
+<link rel="stylesheet" href="assets/styles.css?v=18">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org","@type":"Organization",
@@ -165,7 +172,7 @@
       <article class="app-feature" style="--hue:var(--h-pyeonip)">
         <div class="phone-stage rv from-left">
           <div class="phone">
-            <div class="phone-screen"><img src="assets/shots/pyeoniplog.png?v=17" width="780" height="1732" loading="lazy" alt="편입로그 앱 홈 화면 — 목표 학교 D-day와 오늘의 단어"></div>
+            <div class="phone-screen"><img src="assets/shots/pyeoniplog.png?v=18" width="780" height="1732" loading="lazy" alt="편입로그 앱 홈 화면 — 목표 학교 D-day와 오늘의 단어"></div>
           </div>
         </div>
         <div class="app-detail rv from-right">
@@ -193,7 +200,7 @@
       <article class="app-feature rev" style="--hue:var(--h-pet)">
         <div class="phone-stage rv from-right">
           <div class="phone">
-            <div class="phone-screen"><img src="assets/shots/petlog.png?v=17" width="780" height="1732" loading="lazy" alt="펫로그 앱 화면 — 반려동물 프로필 등록"></div>
+            <div class="phone-screen"><img src="assets/shots/petlog.png?v=18" width="780" height="1732" loading="lazy" alt="펫로그 앱 화면 — 반려동물 프로필 등록"></div>
             <span class="float-tag">Beta</span>
           </div>
         </div>
@@ -220,7 +227,7 @@
       <article class="app-feature" style="--hue:var(--h-tee)">
         <div class="phone-stage rv from-left">
           <div class="phone">
-            <div class="phone-screen"><img src="assets/shots/lasttee.png?v=17" width="780" height="1732" loading="lazy" alt="라스트티 앱 화면 — 온보딩"></div>
+            <div class="phone-screen"><img src="assets/shots/lasttee.png?v=18" width="780" height="1732" loading="lazy" alt="라스트티 앱 화면 — 온보딩"></div>
             <span class="float-tag">Beta</span>
           </div>
         </div>
@@ -247,7 +254,7 @@
       <article class="app-feature rev" style="--hue:var(--h-meet)">
         <div class="phone-stage rv from-right">
           <div class="phone">
-            <div class="phone-screen"><img src="assets/shots/meetlog.png?v=17" width="780" height="1732" loading="lazy" alt="meetlog 앱 화면 — 오픈 준비 중 안내"></div>
+            <div class="phone-screen"><img src="assets/shots/meetlog.png?v=18" width="780" height="1732" loading="lazy" alt="meetlog 앱 화면 — 오픈 준비 중 안내"></div>
             <span class="float-tag">준비 중</span>
           </div>
         </div>
@@ -374,7 +381,10 @@
 <!-- ============ CTA ============ -->
 <section class="section-tight">
   <div class="container">
-    <div class="cta-band rv">
+    <!-- 로고 애니메이션이 먼저 나오고, 로고가 완성되면 문구로 넘어갑니다(app.js). -->
+    <div class="cta-band rv" data-intro>
+      <video class="cta-logo" src="assets/brand/logo-reveal.mp4" width="960" height="540" muted playsinline
+        preload="auto" disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true"></video>
       <span class="eyebrow">Let's build</span>
       <h2>당신의 일에도, 아직 남지 않은 기록이 있습니다.</h2>
       <p>제휴, 투자, 신규 서비스 아이디어, 채용 — 어떤 이야기든 좋습니다.
@@ -383,6 +393,8 @@
     </div>
   </div>
 </section>
+</div><!-- /.page-body. 원래 푸터 뒤에서 닫으려던 것이지만 </main> 이 먼저 와서 브라우저는 여기서 닫아 왔습니다.
+     화면이 그 구조로 맞춰져 있어 여기서 닫습니다. -->
 </main>
 
 <!-- ============ FOOTER ============ -->
@@ -438,8 +450,7 @@
     </div>
   </div>
 </footer>
-</div><!-- /.page-body -->
 
-<script src="assets/app.js?v=17"></script>
+<script src="assets/app.js?v=18"></script>
 </body>
 </html>

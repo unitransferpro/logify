@@ -45,6 +45,13 @@ assets/
   styles.css    전체 스타일 (단일 파일, :root 에 디자인 토큰)
   app.js        전체 스크립트 (단일 파일, 즉시실행 함수 하나)
   favicon-2.svg 파비콘 (?v= 를 붙이지 않습니다. 3번 항목 끝 참고)
+  og.png        링크 미리보기 이미지 1200x630 (전 페이지 og:image). 그림을 바꾸면 파일 이름도 바꾸세요(og-2.png).
+                카카오톡 등은 주소별로 옛 그림을 기억해서, 같은 이름이면 한참 옛 그림이 뜹니다
+  apps/         고객지원 카드의 앱 아이콘 <슬러그>.png (128px 꽉 찬 정사각형, 모서리는 CSS 가 둥글립니다).
+                아이콘이 없는 앱은 support.html 에서 .ic-letter 글자 타일로 둡니다(지금 meetlog)
+  brand/        로고 애니메이션 logo-reveal.mp4. 홈·회사 소개의 Let's build 띠(data-intro)에서 먼저 나오고
+                로고가 완성되면 문구로 넘어갑니다. .cta-band 배경(#0d0d15)은 영상에 박힌 배경색과 같아야
+                합니다. 영상을 바꾸면 같이 맞추세요
   shots/        앱 스크린샷 (phone mockup 안에 들어가는 이미지)
 .nojekyll       GitHub Pages 의 Jekyll 처리 비활성화 (지우지 마세요)
 sitemap.xml     검색엔진에 알려주는 페이지 목록 (네이버 서치어드바이저·구글에 제출). 페이지를 더하거나 빼면 같이 고칩니다
@@ -56,7 +63,8 @@ robots.txt      크롤러 안내. 사이트맵 위치만 적혀 있습니다
 
 `assets/app.js` 안에 들어있는 것(위에서 아래 순서대로):
 `[data-year]` 연도 스탬프 · 나브 스크롤 상태 + 모바일 시트 · `.rv` 스크롤 리빌(IntersectionObserver) ·
-`[data-count]` 숫자 카운트업 · 로드맵 타임라인 점등 · 히어로 캔버스(`#gapfield`, "빈틈을 찾는" 레티클 애니메이션) ·
+`[data-count]` 숫자 카운트업 · 로드맵 타임라인 점등 · 히어로 하늘 캔버스(`#skyfield`, 해와 달이 90초에 하루를 도는 애니메이션) ·
+Let's build 띠의 로고 인트로(`.cta-band[data-intro]`) ·
 문의 폼 검증 + mailto 조립.
 
 기능을 추가할 때도 **이 두 파일 안에** 같은 패턴으로 넣으세요. 파일을 쪼개지 마세요(관리자 콘솔은 예외, 6번 참고).
@@ -242,7 +250,7 @@ GitHub Pages 는 정적 호스팅이라 백엔드가 없습니다. 그래서 관
 (2026-07-28: meta description 에 남아 있던 **대시부스터**는 우리 앱이 아니어서 삭제했고, `styles.css` 의 미사용 `--h-dash` 변수도 함께 정리했습니다.)
 (2026-07-29: **펫시세 → 펫로그** 로 이름이 바뀌었습니다. 옛 이름 `펫시세` 는 되살리지 마세요.)
 
-앱을 추가 · 제거할 땐 **여섯 곳을 같이** 맞추세요. 한 곳만 고치면 또 어긋납니다.
+앱을 추가 · 제거할 땐 **일곱 곳을 같이** 맞추세요. 한 곳만 고치면 또 어긋납니다.
 
 1. `index.html` 의 앱 소개 섹션 (`article.app-feature`)
 2. `index.html` 의 meta description
@@ -250,6 +258,7 @@ GitHub Pages 는 정적 호스팅이라 백엔드가 없습니다. 그래서 관
 4. 루트 HTML 전부의 푸터 `Services` 링크 목록 (`grep -l 'Services' *.html` 로 대상 확인)
 5. 그 앱의 상세 페이지 `app-앱이름.html` 과 `products.html` 의 목록
 6. `sitemap.xml` 의 `<url>` 줄 (없는 페이지가 남아 있으면 네이버·구글이 404 를 보고, 새 페이지는 제출이 안 됩니다)
+7. `support.html` 의 앱 카드(아이콘 `assets/apps/<슬러그>.png`)와 `contact.html` 의 `<select id="app">` 선택지
 
 앱마다 고유 색은 `styles.css` 의 `:root` 에 `--h-앱이름` 으로 정의하고, `article.app-feature` 의 `style="--hue:var(--h-앱이름)"` 로 연결합니다. **앱을 빼면 그 변수도 지우세요.**
 
@@ -268,7 +277,7 @@ GitHub Pages 는 정적 호스팅이라 백엔드가 없습니다. 그래서 관
 새 섹션에 `.rv` 를 붙였는데 IntersectionObserver 가 안 걸리는 위치(예: 처음부터 화면 밖 아닌 곳, `display:none` 컨테이너 안)면 영구히 숨습니다.
 `app.js` 에 1200ms 후 `body.loaded` 폴백이 있는 건 히어로 전용이니, 새 섹션은 실제 스크롤로 확인하세요.
 
-**히어로 캔버스와 텍스트 겹침** — `pickGap()` 이 레티클을 오른쪽 영역에만 두도록 좌표를 제한하고 있습니다(`xMin = W * 0.56`, 좁은 화면은 `0.28`).
+**히어로 캔버스와 텍스트 겹침** — 하늘 캔버스(`#skyfield`)의 해와 달은 문장을 피해 돕니다. 넓은 화면은 오른쪽 여백의 큰 궤도(`cx = w * 0.82`), 760px 보다 좁은 화면은 문장 위쪽만 지나는 얕은 궤도(`cy = h * 0.34`)입니다.
 히어로 카피 레이아웃을 바꾸면 이 값도 같이 조정해야 텍스트를 안 침범합니다.
 
 **`prefers-reduced-motion` 경로를 잊음** — `app.js` 의 애니메이션은 전부 `reduce` 분기가 있습니다.
@@ -284,6 +293,10 @@ GitHub Pages 는 정적 호스팅이라 백엔드가 없습니다. 그래서 관
 슬러그는 `contact.html` 의 `<select id="app">` option value 와 같아야 합니다. 앱을 추가하면 두 곳을 같이 넣으세요.
 
 **`.nojekyll` 삭제 금지** — 지우면 GitHub Pages 가 Jekyll 처리를 하면서 `_` 로 시작하는 경로 등이 깨질 수 있습니다.
+
+**사이트 로고 글꼴은 공식 로고와 같은 Poppins ExtraBold 입니다** — `.brand` 는 본문 글꼴(Pretendard)이 아니라
+Poppins 를 씁니다(2026-09-28, 로고 영상과 맞춤). 각 HTML 이 `family=Poppins:wght@800&text=Logify` 로 로고 여섯
+글자만 받으므로, 로고 글자를 바꾸면 `text=` 도 같이 바꾸세요. 안 바꾸면 새 글자만 다른 글꼴로 나옵니다.
 
 **CDN 폰트 의존** — Pretendard 와 Google Fonts 가 막히는 환경에선 폰트가 폴백됩니다.
 `--f-display` / `--f-body` 에 system-ui 폴백이 이미 들어 있으니, 폰트 스택을 줄이지 마세요.

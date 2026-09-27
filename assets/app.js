@@ -327,6 +327,31 @@
     if (!reduce) requestAnimationFrame(skyLoop);   // reduce 면 위에서 그린 한 장만 유지
   }
 
+  /* ---- 홈·회사 소개 띠: 로고 애니메이션이 먼저, 로고가 완성되면 문구로 ---- */
+  document.querySelectorAll('.cta-band[data-intro]').forEach(function (band) {
+    var v = band.querySelector('.cta-logo');
+    // 움직임 줄이기거나 관찰자가 없으면 인트로 없이 문구만 둡니다(CSS 는 .intro 가 있을 때만 문구를 숨깁니다)
+    if (!v || reduce || !('IntersectionObserver' in window)) return;
+    // 인트로가 곧 등장 연출이라 스크롤 페이드(.rv)는 건너뜁니다. 반쯤 투명한 띠 위에서 로고가 움직이면 회색으로 보입니다.
+    band.classList.add('intro'); band.classList.add('in');
+    var finish = function () { band.classList.add('done'); };
+    // 원래 속도로 끝까지 틉니다. 영상이 완성된 로고로 0.9초 머물다 끝나서 따로 기다리지 않습니다.
+    // (1.5배로 틀었을 땐 한 동작이 0.2초라 사이트의 다른 등장 0.7~0.9초보다 급해 보였습니다)
+    v.addEventListener('ended', finish);
+    v.addEventListener('error', finish);
+    var bio = new IntersectionObserver(function (es) {
+      var e = es[es.length - 1];
+      // 띠가 60% 이상 보이면 시작합니다. 띠가 화면보다 훨씬 커서(글자 확대, 가로로 눕힌 작은 폰)
+      // 60% 가 보일 수 없을 땐 화면의 60% 를 채우면 시작합니다. 안 그러면 문구가 끝까지 숨어 있습니다.
+      if (!e.isIntersecting || (e.intersectionRatio < 0.6 && e.intersectionRect.height < window.innerHeight * 0.6)) return;
+      bio.disconnect();
+      var pr = v.play();
+      if (pr && pr.catch) pr.catch(finish);   // 저전력 모드 등으로 자동재생이 막히면 문구를 바로
+      setTimeout(finish, 6500);               // 영상이 끝내 안 떠도 문구가 숨은 채 남지 않게
+    }, { threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] });
+    bio.observe(band);
+  });
+
   /* ---- contact form (static site → composes an email) ---- */
   var form = document.getElementById('contactForm');
   if (form) {
