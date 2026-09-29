@@ -349,12 +349,15 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .cta-band p{color:rgba(255,255,255,.72);margin:18px 0 32px;max-width:52ch;font-size:1.1rem}
 .cta-band .eyebrow{color:#93a6ff}
 .cta-band .eyebrow::before,.cta-band .eyebrow::after{color:#93a6ff}
-/* 홈·회사 소개 띠의 로고 인트로(app.js). JS 가 .intro 를 붙일 때만 문구를 숨기므로
+/* 홈 띠의 로고 인트로(app.js). JS 가 .intro 를 붙일 때만 문구를 숨기므로
    스크립트가 없거나 움직임 줄이기를 켠 사람에게는 문구가 처음부터 보입니다. */
-.cta-band .cta-logo{position:absolute;inset:0;z-index:2;width:100%;height:100%;object-fit:contain;
+/* 로고는 app.js 가 그리는 SVG 입니다(viewBox 960x540, preserveAspectRatio meet = 가운데 맞춰 들어감).
+   영상이 아니라 배경이 없어서 띠 색이 그대로 비칩니다. 그래서 삼성인터넷 다크모드가 띠 색을
+   바꿔도 로고와 어긋나지 않습니다. 영상으로 되돌리지 마세요(CLAUDE.md 8번). */
+.cta-band .cta-logo{position:absolute;inset:0;z-index:2;width:100%;height:100%;
   pointer-events:none;opacity:0;visibility:hidden}
-.cta-band .cta-logo::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
-.cta-band.intro .cta-logo{opacity:1;visibility:visible}
+/* 로고는 그리기가 시작된 뒤(.playing)에 보입니다. 띠가 화면에 들기 전에는 문구만 숨긴 빈 띠입니다. */
+.cta-band.intro.playing .cta-logo{opacity:1;visibility:visible}
 .cta-band.intro>:not(.cta-logo){opacity:0;transform:translateY(26px)}
 /* 속도는 사이트의 다른 등장(.rv: 0.7초, 같은 곡선, 0.08초 간격)에 맞춥니다.
    로고는 처음에 빨리 옅어지는 곡선으로 빠져서, 0.3초 뒤 문구가 올라올 땐 거의 안 보입니다. */

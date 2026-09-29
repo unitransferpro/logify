@@ -327,27 +327,174 @@
     if (!reduce) requestAnimationFrame(skyLoop);   // reduce 면 위에서 그린 한 장만 유지
   }
 
-  /* ---- 홈·회사 소개 띠: 로고 애니메이션이 먼저, 로고가 완성되면 문구로 ---- */
+  /* ---- 홈 띠: 로고 애니메이션이 먼저, 로고가 완성되면 문구로 (홈에만 둡니다) ---- */
+  /* 로고 인트로 — 원래 영상(logo-reveal.mp4)을 SVG 로 다시 그립니다.
+     영상은 색이 그림 안에 박혀 있어 삼성인터넷 다크모드에서 띠와 색이 어긋나고, 카톡 같은
+     안드로이드 WebView 는 재생 전 순간에 기본 재생 버튼 그림을 띄웠습니다. 브라우저가 직접
+     그리면 둘 다 생기지 않습니다. 좌표는 영상과 같은 960x540 이고, 글자는 사이트 로고와 같은
+     Poppins 800 글리프를 도형으로 옮겨서 웹폰트가 늦게 떠도 모양이 틀어지지 않습니다.
+     아래 숫자는 전부 원래 영상을 프레임 단위로 재서 얻은 값입니다(초 단위). */
+  var LOGO_INTRO = {
+    duration: 3.6,
+    glyphs: [
+        'M256.6 309H295.3V335.5H222V211.1H256.6Z',
+        'M299.2 285.9Q299.2 270.5 306 259.1Q312.8 247.6 324.5 241.4Q336.3 235.2 351.1 235.2Q365.9 235.2 377.7 241.4Q389.4 247.6 396.2 259.1Q403 270.5 403 285.9Q403 301.3 396.2 312.8Q389.4 324.4 377.6 330.6Q365.7 336.7 350.9 336.7Q336.1 336.7 324.4 330.6Q312.6 324.4 305.9 312.9Q299.2 301.4 299.2 285.9ZM367.9 285.9Q367.9 275.8 363 270.5Q358.2 265.3 351.1 265.3Q344 265.3 339.3 270.5Q334.5 275.8 334.5 285.9Q334.5 296.1 339.1 301.4Q343.7 306.7 350.9 306.7Q358.2 306.7 363 301.3Q367.9 296 367.9 285.9Z',
+        'M479 250.3V236.5H513.5V334.4Q513.5 348.4 508.3 359.6Q503 370.8 491.7 377.5Q480.5 384.2 463.4 384.2Q440.5 384.2 426.7 373.4Q412.9 362.7 411 344.1H445.1Q446.1 348.9 450.4 351.6Q454.6 354.2 461.3 354.2Q479 354.2 479 334.4V321.7Q474.9 328.6 467.4 332.7Q459.9 336.7 449.8 336.7Q438 336.7 428.4 330.6Q418.8 324.4 413.2 312.8Q407.6 301.3 407.6 285.9Q407.6 270.5 413.2 259.1Q418.8 247.6 428.4 241.4Q438 235.2 449.8 235.2Q459.9 235.2 467.4 239.3Q474.9 243.4 479 250.3ZM460.9 265.4Q453.2 265.4 448.1 270.8Q442.9 276.2 442.9 285.9Q442.9 295.4 448.1 301Q453.2 306.6 460.9 306.6Q468.5 306.6 473.7 301.1Q479 295.6 479 285.9Q479 276.4 473.7 270.9Q468.5 265.4 460.9 265.4Z',
+        'M564.1 236.5V335.5H529.5V236.5Z',
+        'M633.5 265.3H618V335.5H583.2V265.3H572.5V236.5H583.2V235.6Q583.2 216.5 594.4 206.4Q605.6 196.2 626.6 196.2Q630.9 196.2 633.2 196.4V225.9Q631.8 225.7 629.3 225.7Q623.6 225.7 621 228.3Q618.3 230.8 618 236.5H633.5Z',
+        'M748.7 236.5 685.8 382.6H648.3L671.9 331.3L631.3 236.5H669.8L690.6 292.6L710.7 236.5Z'
+    ],
+    dot: 'M526.7 209.7Q526.7 201.9 532.2 196.8Q537.8 191.7 547 191.7Q556 191.7 561.5 196.8Q567.1 201.9 567.1 209.7Q567.1 217.2 561.5 222.3Q556 227.3 547 227.3Q537.8 227.3 532.2 222.3Q526.7 217.2 526.7 209.7Z',
+    dotC: [546.88, 209.48],
+    white: [238, 241, 247], blue: [108, 134, 239], gray: [150, 151, 157]
+  };
+
+  /* 측정점 사이를 넘치지 않는 곡선으로 잇습니다(단조 3차 보간). 양 끝 밖은 끝값을 유지합니다. */
+  function monoCurve(pts) {
+    var n = pts.length, xs = [], ys = [], d = [], m = [], i;
+    for (i = 0; i < n; i++) { xs[i] = pts[i][0]; ys[i] = pts[i][1]; }
+    for (i = 0; i < n - 1; i++) d[i] = (ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]);
+    m[0] = d[0]; m[n - 1] = d[n - 2];
+    for (i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+    for (i = 0; i < n - 1; i++) {
+      if (d[i] === 0) { m[i] = 0; m[i + 1] = 0; continue; }
+      var a = m[i] / d[i], b = m[i + 1] / d[i], s = a * a + b * b;
+      if (s > 9) { var k = 3 / Math.sqrt(s); m[i] = k * a * d[i]; m[i + 1] = k * b * d[i]; }
+    }
+    return function (x) {
+      if (x <= xs[0]) return ys[0];
+      if (x >= xs[n - 1]) return ys[n - 1];
+      var j = 0; while (x > xs[j + 1]) j++;
+      var h = xs[j + 1] - xs[j], t = (x - xs[j]) / h, t2 = t * t, t3 = t2 * t;
+      return (2 * t3 - 3 * t2 + 1) * ys[j] + (t3 - 2 * t2 + t) * h * m[j] +
+        (-2 * t3 + 3 * t2) * ys[j + 1] + (t3 - t2) * h * m[j + 1];
+    };
+  }
+
+  function buildLogoIntro() {
+    var NS = 'http://www.w3.org/2000/svg', L = LOGO_INTRO;
+    var el = function (tag, attrs, parent) {
+      var e = document.createElementNS(NS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    };
+    var svg = el('svg', { 'class': 'cta-logo', viewBox: '0 0 960 540', preserveAspectRatio: 'xMidYMid meet',
+      'aria-hidden': 'true', focusable: 'false' });
+    // 글자는 y=392 선 아래가 가려진 채로 솟아오릅니다. id 는 페이지마다 하나라 겹치지 않습니다.
+    var cid = 'logoRise' + Math.random().toString(36).slice(2, 7);
+    el('rect', { width: 960, height: 392 }, el('clipPath', { id: cid }, el('defs', {}, svg)));
+    var word = el('g', { 'clip-path': 'url(#' + cid + ')' }, svg);
+    var chars = [];
+    for (var i = 0; i < L.glyphs.length; i++) chars.push(el('path', { d: L.glyphs[i], fill: 'rgb(' + L.white + ')' }, word));
+    var sel = el('rect', { fill: 'none', stroke: 'rgb(' + L.gray + ')', 'stroke-width': 2.5,
+      'stroke-dasharray': '7 5', 'stroke-dashoffset': 6.5, rx: 8, opacity: 0 }, svg);
+    var sq = el('rect', { fill: 'none', 'stroke-width': 3, rx: 10, opacity: 0 }, svg);
+    var ring = el('circle', { cx: 545.5, cy: 209.5, r: 0, fill: 'none', stroke: 'rgb(' + L.blue + ')',
+      'stroke-width': 3, opacity: 0 }, svg);
+    var dot = el('path', { d: L.dot, fill: 'rgb(' + L.blue + ')', opacity: 0 }, svg);
+
+    // 글자 하나가 솟는 곡선(영상의 L 을 잰 값). 여섯 글자 모두 같은 곡선을 0.055초씩 늦게 따라갑니다.
+    var rise = monoCurve([[0, 232], [0.04, 179], [0.08, 135], [0.12, 99], [0.16, 69], [0.20, 46],
+      [0.24, 27], [0.28, 14], [0.32, 4], [0.36, -2], [0.40, -5], [0.44, -6], [0.48, -6], [0.52, -4],
+      [0.56, -3], [0.60, -1], [0.64, 0]]);
+    // 점이 i 에 닿는 순간 단어가 살짝 눌렸다 돌아옵니다(px, 글자마다 폭이 조금 다름)
+    var dip = monoCurve([[2.26, 0], [2.28, 1], [2.32, 0.7], [2.36, 0.25], [2.40, 0]]);
+    var dipAmp = [2, 2, 2.5, 3, 3, 3];
+    // 점선 상자: o 를 감싼 뒤 i 위로 대각선 이동하며 줄어듭니다(진행도 0~1)
+    var selPop = monoCurve([[1.18, 139], [1.20, 137], [1.24, 134], [1.28, 133]]);
+    var selMove = monoCurve([[1.47, 0], [1.52, 0.036], [1.56, 0.144], [1.60, 0.40], [1.64, 0.746], [1.68, 0.921],
+      [1.72, 0.982], [1.76, 0.997], [1.79, 1]]);
+    var sqOp = monoCurve([[1.80, 0], [1.82, 1], [1.93, 1], [1.96, 0.89], [2.00, 0.67], [2.04, 0.34], [2.08, 0]]);
+    // 점: 사각형 안에서 차오른 뒤 떨어져 i 에 닿으며 찌그러졌다가 튕겨 자리잡습니다
+    var dotPop = monoCurve([[1.945, 0], [1.96, 0.3], [2.00, 0.925], [2.04, 1.05], [2.08, 1]]);
+    var dotY = monoCurve([[2.08, -109], [2.12, -105], [2.16, -91], [2.20, -64], [2.24, -24.5],
+      [2.28, 7], [2.32, 7.5], [2.36, -7], [2.42, 0]]);
+    var dotSX = monoCurve([[2.08, 1], [2.20, 0.975], [2.24, 0.9], [2.28, 1.2], [2.32, 1.325], [2.36, 1.125], [2.42, 1]]);
+    var dotSY = monoCurve([[2.08, 1], [2.20, 1], [2.24, 1.083], [2.28, 0.78], [2.32, 0.64], [2.36, 0.833], [2.42, 1]]);
+    // 파동: 점이 자리잡을 곳을 중심으로 퍼지며 사라집니다
+    var ringR = monoCurve([[2.26, 18], [2.28, 35.5], [2.32, 63.5], [2.36, 85.5], [2.40, 103.5], [2.44, 116.5],
+      [2.48, 126.5], [2.52, 132.5], [2.56, 137.5], [2.60, 139.5], [2.64, 140.5], [2.68, 141]]);
+    var ringA = monoCurve([[2.26, 0], [2.265, 0.34], [2.28, 0.33], [2.32, 0.32], [2.36, 0.27], [2.40, 0.26],
+      [2.44, 0.22], [2.48, 0.16], [2.52, 0.15], [2.56, 0.11], [2.60, 0.08], [2.64, 0.03], [2.68, 0]]);
+
+    var mix = function (a, b, p) {
+      return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * p) + ',' + Math.round(a[1] + (b[1] - a[1]) * p) + ',' +
+        Math.round(a[2] + (b[2] - a[2]) * p) + ')';
+    };
+    var smooth = function (p) { p = p < 0 ? 0 : p > 1 ? 1 : p; return p * p * (3 - 2 * p); };
+    var box = function (r, cx, cy, size, sw) {       // size 는 선 두께까지 포함한 바깥 크기(영상에서 잰 값)
+      var s = size - sw;
+      r.setAttribute('x', (cx - s / 2).toFixed(2)); r.setAttribute('y', (cy - s / 2).toFixed(2));
+      r.setAttribute('width', s.toFixed(2)); r.setAttribute('height', s.toFixed(2));
+    };
+
+    function render(t) {
+      var i, p;
+      var dp = dip(t);
+      for (i = 0; i < chars.length; i++) chars[i].setAttribute('transform', 'translate(0 ' + (rise(t - (0.04 + 0.055 * i)) + dp * dipAmp[i]).toFixed(2) + ')');
+      for (i = 0; i < 3; i++) chars[3 + i].setAttribute('fill', mix(L.white, L.blue, smooth((t - (2.26 + 0.0725 * i)) / 0.15)));
+
+      if (t < 1.18 || t >= 1.835) sel.setAttribute('opacity', 0);
+      else {
+        p = selMove(t);
+        sel.setAttribute('opacity', t < 1.815 ? 1 : 1 - (t - 1.815) / 0.02);
+        box(sel, 351 + (546 - 351) * p, 288 + (100.5 - 288) * p, t < 1.47 ? selPop(t) : 133 + (62 - 133) * p, 2.5);
+      }
+      p = sqOp(t);
+      sq.setAttribute('opacity', p.toFixed(3));
+      if (p > 0) {
+        box(sq, 545.5, 100.5, t < 1.845 ? 58 - Math.max(0, t - 1.815) / 0.03 * 6 : 52, 3);
+        sq.setAttribute('stroke', mix(L.gray, L.blue, 0.8 * smooth((t - 1.815) / 0.06)));
+      }
+      if (t < 1.945) dot.setAttribute('opacity', 0);
+      else {
+        var c = L.dotC, s = t < 2.08 ? dotPop(t) : 1, sx = t < 2.08 ? s : dotSX(t), sy = t < 2.08 ? s : dotSY(t);
+        var y = t < 2.08 ? -109 : dotY(t);
+        dot.setAttribute('opacity', 1);
+        dot.setAttribute('transform', 'translate(' + c[0] + ' ' + (c[1] + y).toFixed(2) + ') scale(' +
+          sx.toFixed(3) + ' ' + sy.toFixed(3) + ') translate(' + (-c[0]) + ' ' + (-c[1]) + ')');
+      }
+      p = ringA(t);
+      ring.setAttribute('opacity', p.toFixed(3));
+      if (p > 0) ring.setAttribute('r', ringR(t).toFixed(2));
+    }
+    render(0);
+    return { svg: svg, render: render, duration: L.duration };
+  }
+
   document.querySelectorAll('.cta-band[data-intro]').forEach(function (band) {
-    var v = band.querySelector('.cta-logo');
     // 움직임 줄이기거나 관찰자가 없으면 인트로 없이 문구만 둡니다(CSS 는 .intro 가 있을 때만 문구를 숨깁니다)
-    if (!v || reduce || !('IntersectionObserver' in window)) return;
+    if (reduce || !('IntersectionObserver' in window) || !window.requestAnimationFrame) return;
+    var intro = buildLogoIntro();
+    // 첫 자식으로 넣어서, 문구에 걸린 nth-child 지연(3~5번째)이 그대로 맞습니다
+    band.insertBefore(intro.svg, band.firstChild);
     // 인트로가 곧 등장 연출이라 스크롤 페이드(.rv)는 건너뜁니다. 반쯤 투명한 띠 위에서 로고가 움직이면 회색으로 보입니다.
     band.classList.add('intro'); band.classList.add('in');
-    var finish = function () { band.classList.add('done'); };
-    // 원래 속도로 끝까지 틉니다. 영상이 완성된 로고로 0.9초 머물다 끝나서 따로 기다리지 않습니다.
-    // (1.5배로 틀었을 땐 한 동작이 0.2초라 사이트의 다른 등장 0.7~0.9초보다 급해 보였습니다)
-    v.addEventListener('ended', finish);
-    v.addEventListener('error', finish);
+    var over = false;
+    var finish = function () { if (!over) { over = true; band.classList.add('done'); } };
     var bio = new IntersectionObserver(function (es) {
       var e = es[es.length - 1];
       // 띠가 60% 이상 보이면 시작합니다. 띠가 화면보다 훨씬 커서(글자 확대, 가로로 눕힌 작은 폰)
       // 60% 가 보일 수 없을 땐 화면의 60% 를 채우면 시작합니다. 안 그러면 문구가 끝까지 숨어 있습니다.
       if (!e.isIntersecting || (e.intersectionRatio < 0.6 && e.intersectionRect.height < window.innerHeight * 0.6)) return;
       bio.disconnect();
-      var pr = v.play();
-      if (pr && pr.catch) pr.catch(finish);   // 저전력 모드 등으로 자동재생이 막히면 문구를 바로
-      setTimeout(finish, 6500);               // 영상이 끝내 안 떠도 문구가 숨은 채 남지 않게
+      // 원래 영상과 같은 속도(3.6초)로 끝까지 그립니다. 완성된 로고로 0.9초 머문 뒤 문구로 넘어갑니다.
+      // (1.5배로 틀었을 땐 한 동작이 0.2초라 사이트의 다른 등장 0.7~0.9초보다 급해 보였습니다)
+      band.classList.add('playing');
+      var t0 = null;
+      // 그리기가 아예 시작되지 않으면(백그라운드 탭 등) 문구가 숨은 채 남지 않게 6.5초 뒤 보여 줍니다.
+      // 그리기가 시작되면 이 타이머는 끄고, 끝까지 그린 뒤 직접 넘어갑니다. 켜 두면 늦게 시작한
+      // 애니메이션을 중간에 끊습니다(백그라운드 탭에서 5초 뒤 돌아오면 3.6초 중 1.5초에서 잘렸습니다).
+      var guard = setTimeout(finish, 6500);
+      var step = function (now) {
+        if (over) return;
+        if (t0 === null) { t0 = now; clearTimeout(guard); }
+        var t = (now - t0) / 1000;
+        intro.render(t < intro.duration ? t : intro.duration);
+        if (t < intro.duration) requestAnimationFrame(step); else finish();
+      };
+      requestAnimationFrame(step);
     }, { threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] });
     bio.observe(band);
   });
