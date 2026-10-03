@@ -311,18 +311,46 @@
         skyVisible = entries[0].isIntersecting;
       }).observe(sky);
     }
-    function skyLoop() {
-      if (skyVisible) {
-        tod = (tod + 24 / (DAY_SEC * 60)) % 24;
-        sframe++;
+    // 본문(.page-body)이 하늘을 다 덮으면 그리지 않습니다. 히어로가 화면 위에 붙어 있어서(sticky) 위 관찰자는
+    // 가려진 하늘도 '보인다'고 하고, 그대로면 홈을 끝까지 스크롤하는 내내 안 보이는 하늘을 화면 크기로 다시
+    // 그립니다. 그래픽이 약한 폰(카톡 같은 인앱 브라우저)에서는 이게 스크롤 끊김의 거의 전부였습니다
+    // (2026-10-03, CPU 4배 느리게 + 소프트웨어 그리기로 측정: 본문이 덮은 구간 늦은 프레임 63% -> 0%. 유리 효과·오로라는 차이 없음).
+    var cover = document.querySelector('.page-body'), coverAt = Infinity;
+    function measureCover() {
+      // 본문 윗변이 화면 위로 둥근 모서리(34px)보다 더 올라가야 양쪽 모서리 틈까지 다 가려집니다
+      coverAt = cover ? cover.getBoundingClientRect().top + window.scrollY + 40 : Infinity;
+    }
+    // 스크롤하는 동안에도 기본은 계속 그립니다(해가 멈추지 않게). 다만 이 기기가 스크롤하면서 하늘까지 그리느라
+    // 프레임을 놓친다는 게 보이면(놓친 프레임이 30% 를 넘게 이어지면) 그때부터는 스크롤하는 동안만 멈추고, 손을 떼고
+    // 0.15초 뒤 이어 그립니다. 시각(tod)은 그릴 때만 흐르므로 멈췄다 이어 그려도 해가 튀지 않습니다.
+    var lastScroll = 0, prevT = 0, paintedPrev = false, lateRate = 0, pauseOnScroll = false, lastPaintT = 0;
+    window.addEventListener('scroll', function () { lastScroll = Date.now(); }, { passive: true });
+    function skyLoop(t) {
+      var scrolling = Date.now() - lastScroll < 150;
+      // 하늘을 그린 프레임 다음에만 잽니다. 본문이 덮은 동안 늦는 프레임은 하늘 탓이 아닙니다.
+      if (scrolling && paintedPrev && prevT && !pauseOnScroll) {
+        lateRate = lateRate * 0.9 + (t - prevT > 24 ? 0.1 : 0);
+        if (lateRate > 0.3) pauseOnScroll = true;
+      }
+      prevT = t;
+      paintedPrev = skyVisible && window.scrollY < coverAt && !(scrolling && pauseOnScroll);
+      if (paintedPrev) {
+        // 화면 주사율과 상관없이 90초에 하루가 가도록 실제 흐른 시간으로 셉니다. 프레임 수로 세던 때는
+        // 120Hz 폰에서 해·별·구름이 두 배 빨랐고 느린 기기에서는 느렸습니다. 멈췄다 이어 그릴 땐 한 번에
+        // 0.1초까지만 흘려서(해가 0.4도, 1~2px) 해가 튀지 않습니다. 초당 10프레임 이상이면 제 속도로 돕니다.
+        var dt = lastPaintT ? Math.min((t - lastPaintT) / 1000, 0.1) : 1 / 60;
+        lastPaintT = t;
+        tod = (tod + 24 / DAY_SEC * dt) % 24;
+        sframe += dt * 60;   // 별 반짝임·구름 흐름은 60fps 한 프레임 단위로 맞춰 둔 값이라 같은 단위로 셉니다
         paintSky();
       }
       requestAnimationFrame(skyLoop);
     }
 
-    skyResize();
+    skyResize(); measureCover();
+    window.addEventListener('load', measureCover);   // 글꼴·그림이 늦게 떠 히어로 높이가 바뀌어도 맞게
     window.addEventListener('resize', function () {
-      clearTimeout(sky._rt); sky._rt = setTimeout(skyResize, 180);
+      clearTimeout(sky._rt); sky._rt = setTimeout(function () { skyResize(); measureCover(); }, 180);
     });
     if (!reduce) requestAnimationFrame(skyLoop);   // reduce 면 위에서 그린 한 장만 유지
   }
