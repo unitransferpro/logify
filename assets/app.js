@@ -320,6 +320,28 @@
       // 본문 윗변이 화면 위로 둥근 모서리(34px)보다 더 올라가야 양쪽 모서리 틈까지 다 가려집니다
       coverAt = cover ? cover.getBoundingClientRect().top + window.scrollY + 40 : Infinity;
     }
+    // 본문이 하늘을 다 덮고 화면 하나만큼 더 내려가면 하늘 층(.hero-stick)을 숨깁니다. 빠르게 튕기면 폰이 본문 조각을
+    // 미처 못 그려 그 자리가 비는데, 뒤에 어두운 하늘이 깔려 있으면 본문 한가운데로 하늘이 번쩍 비쳤습니다
+    // (카톡 녹화 2026-10-04: 17.4초 4프레임, 14.8~15.2초 본문 전체). 숨겨 두면 밝은 바탕이 비쳐 다른 사이트에서
+    // 빠르게 넘길 때와 같은 정도가 됩니다. 다시 올라올 땐 하늘이 보이기 화면 하나만큼 전에 미리 꺼내 둡니다.
+    var stick = sky.closest('.hero-stick'), stickHidden = false;
+    function syncStick() {
+      var hide = window.scrollY > coverAt + window.innerHeight;
+      if (stick && hide !== stickHidden) { stickHidden = hide; stick.style.visibility = hide ? 'hidden' : ''; }
+    }
+    window.addEventListener('scroll', syncStick, { passive: true });
+    // 배경 오로라·질감 층도 홈에서는 하늘과 본문에 다 가려지고 맨 아래 푸터 근처에서만 비칩니다. 그런데도 화면에
+    // 고정된 큰 흐림 덩어리라 스크롤하는 프레임마다 합성 일을 시켰습니다(2026-10-04 측정: 프레임당 합성 시간
+    // 3.84ms -> 2.17ms). 푸터가 화면 두 개 거리 안에 들어오기 전까지는 숨깁니다. 숨긴 위치들에서 화면은 픽셀까지 같습니다.
+    var layers = document.querySelectorAll('.aurora,.grain'), foot = document.querySelector('.footer'), footAt = 0, layersHidden = false;
+    function measureFoot() { footAt = foot ? foot.getBoundingClientRect().top + window.scrollY - 40 - window.innerHeight * 2 : 0; }
+    function syncLayers() {
+      var hide = !!cover && window.scrollY < footAt;
+      if (hide === layersHidden) return;
+      layersHidden = hide;
+      for (var li = 0; li < layers.length; li++) layers[li].style.visibility = hide ? 'hidden' : '';
+    }
+    window.addEventListener('scroll', syncLayers, { passive: true });
     // 스크롤하는 동안에도 기본은 계속 그립니다(해가 멈추지 않게). 다만 이 기기가 스크롤하면서 하늘까지 그리느라
     // 프레임을 놓친다는 게 보이면(놓친 프레임이 30% 를 넘게 이어지면) 그때부터는 스크롤하는 동안만 멈추고, 손을 떼고
     // 0.15초 뒤 이어 그립니다. 시각(tod)은 그릴 때만 흐르므로 멈췄다 이어 그려도 해가 튀지 않습니다.
@@ -347,10 +369,10 @@
       requestAnimationFrame(skyLoop);
     }
 
-    skyResize(); measureCover();
-    window.addEventListener('load', measureCover);   // 글꼴·그림이 늦게 떠 히어로 높이가 바뀌어도 맞게
+    skyResize(); measureCover(); syncStick(); measureFoot(); syncLayers();
+    window.addEventListener('load', function () { measureCover(); syncStick(); measureFoot(); syncLayers(); });   // 글꼴·그림이 늦게 떠 히어로 높이가 바뀌어도 맞게
     window.addEventListener('resize', function () {
-      clearTimeout(sky._rt); sky._rt = setTimeout(function () { skyResize(); measureCover(); }, 180);
+      clearTimeout(sky._rt); sky._rt = setTimeout(function () { skyResize(); measureCover(); syncStick(); measureFoot(); syncLayers(); }, 180);
     });
     if (!reduce) requestAnimationFrame(skyLoop);   // reduce 면 위에서 그린 한 장만 유지
   }

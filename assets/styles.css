@@ -235,6 +235,10 @@ h1,h2,h3{font-family:var(--f-display);font-weight:700;line-height:1.05;
 /* 본문 패널: 하늘 위로 올라옵니다 */
 .page-body{position:relative;z-index:1;background:var(--pearl);
   border-radius:34px 34px 0 0;box-shadow:0 -30px 60px rgba(6,9,19,.42);margin-top:-40px}
+/* 홈 본문은 불투명한 단색이라 그 안 카드들의 유리 효과(뒤 흐리기)는 흐릴 게 없어 보이는 차이가 없는데,
+   스크롤할 때마다 프레임별 합성 일만 늘립니다. 홈 본문 안에서만 끕니다(2026-10-04: 켜고 끈 화면이 모바일·데스크톱
+   모든 위치에서 픽셀까지 같음, 프레임당 합성 시간 -18%). 다른 페이지는 오로라 위라 흐림이 보여서 그대로 둡니다. */
+.page-body *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .page-grip{width:56px;height:4px;border-radius:var(--pill);background:var(--line);margin:22px auto 0}
 
 /* 하늘 위 나브: 로고와 메뉴는 원래 색 그대로 두고, 유리판만 살짝 진하게
