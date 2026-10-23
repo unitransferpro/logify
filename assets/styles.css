@@ -531,6 +531,8 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .feat-list li::before{content:"";flex:0 0 auto;margin-top:7px;width:7px;height:7px;border-radius:2px;
   background:var(--hue);transform:rotate(45deg)}
 .app-detail .foot{display:flex;align-items:center;gap:18px;margin-top:26px;flex-wrap:wrap}
+/* 스토어 링크와 배지는 한 덩어리로 줄을 바꿉니다. 따로 두면 좁은 폭에서 App Store 와 Google Play 가 두 줄로 갈라집니다 */
+.foot-stores{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .status-pill{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
   font-weight:600;padding:.45em .85em;border-radius:var(--pill);
   color:color-mix(in srgb,var(--hue) 68%,var(--ink));
@@ -619,6 +621,13 @@ body.sky .nav:not(.scrolled) .nav-inner{background:rgba(255,255,255,.72);
 .feat-card .txt{padding:24px 24px 26px}
 .feat-card h3{font-size:1.12rem;margin-bottom:8px}
 .feat-card p{margin:0;font-size:.94rem;color:var(--muted);line-height:1.7}
+/* 편입로그 상세: 기능별 H2 카드(검색어가 제목에 드러나게). 설명이 길어 두 열로, 제목은 기존 카드 제목 크기. */
+.feat-cards.detail{grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr))}
+.feat-card h2{font-size:1.18rem;line-height:1.3;margin-bottom:10px}
+.feat-card p+p{margin-top:10px}
+.feat-card .tags{margin-top:16px}
+.feat-note{margin:12px 0 0;font-size:.9rem;color:var(--faint)}
+.page-hero h1 .h1-sub{display:block;font-size:.4em;line-height:1.3;margin-top:.6em;color:var(--muted);font-weight:600;letter-spacing:-.01em}
 
 /* 고객지원 */
 /* 앱이 늘거나 빠져도 남는 칸 없이 채우도록 열 수를 고정하지 않습니다 */
