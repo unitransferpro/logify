@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+# Internal project files. The repo is public so they stay reachable,
+# but keep them out of search results.
+Disallow: /CLAUDE.md
+Disallow: /.claude/
 
 Sitemap: https://logify.co.kr/sitemap.xml
