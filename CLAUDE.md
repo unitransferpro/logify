@@ -16,7 +16,7 @@
 
 - **저장소:** `unitransferpro/logify` (GitHub, **public**)
 - **라이브:** https://logify.co.kr (옛 주소 `unitransferpro.github.io/logify/` 는 301 리다이렉트)
-- **브랜드:** Logify / 로기파이 / "시장의 빈틈을 찾아 앱으로 메웁니다" / 잉크 `#0d0f14` + 블루 `#3b5bdb` + 펄 배경 `#eef1f8`
+- **브랜드:** Logify / 로기파이 / "당신의 일상을 log 합니다" / 잉크 `#0d0f14` + 블루 `#3b5bdb` + 펄 배경 `#eef1f8`
 
 ### 이 사이트가 앞으로 할 두 가지 역할
 
@@ -29,6 +29,7 @@
 
 즉 지금은 정적 사이트지만, **기능이 계속 붙는 전제**로 코드를 짜세요.
 새 페이지를 추가할 땐 기존 HTML 과 같은 구조(나브 · 푸터 · `?v=` 캐시버스트)를 그대로 따르고, `sitemap.xml` 에도 한 줄 넣습니다.
+`<head>` 에는 그 페이지 주소로 `<link rel="canonical">` 과 `og:url` 도 넣습니다(4번 항목 참고).
 
 ---
 
@@ -52,6 +53,15 @@ assets/
   favicon-2.svg 파비콘 (?v= 를 붙이지 않습니다. 3번 항목 끝 참고)
   og.png        링크 미리보기 이미지 1200x630 (전 페이지 og:image). 그림을 바꾸면 파일 이름도 바꾸세요(og-2.png).
                 카카오톡 등은 주소별로 옛 그림을 기억해서, 같은 이름이면 한참 옛 그림이 뜹니다
+  logo-square.png  검색엔진용 회사 로고 1024x1024, 흰 바탕 (index.html 구조화 데이터의 "logo").
+                워드마크는 app.js LOGO_INTRO 의 공식 벡터를 그대로 그린 것이라 사이트 로고·이메일 로고와
+                모양이 같습니다(2026-11-06). 원형으로 잘려도 글자가 남도록 폭을 72% 로 뒀습니다.
+                그림을 바꾸면 og.png 처럼 이름을 바꾸고(logo-square-2.png) JSON-LD 의 주소도 같이 고치세요
+  logify-email-white-200.png  회사 메일 바닥글 로고 200x87, 흰 바탕 (2026-11-06).
+                사이트 페이지는 이 파일을 쓰지 않지만, Google Workspace 관리 콘솔의 Gmail 바닥글(Append footer)이
+                https://logify.co.kr/assets/logify-email-white-200.png 주소로 불러갑니다. **지우거나 이름을 바꾸면
+                회사 계정이 보내는 모든 메일의 로고가 깨집니다.** 바꿀 땐 새 이름으로 올리고 관리 콘솔 주소도 같이 고치세요.
+                바닥글 이미지는 높이 100px 이하여야 해서 400px 버전이 아니라 이 200px 버전입니다
   apps/         고객지원 카드의 앱 아이콘 <슬러그>.png (128px 꽉 찬 정사각형, 모서리는 CSS 가 둥글립니다).
                 아이콘이 없는 앱은 support.html 에서 .ic-letter 글자 타일로 둡니다(지금 meetlog)
   brand/        logo-reveal.mp4 — 홈 Let's build 띠 로고 애니메이션의 원본 영상. 사이트는 이제 이 파일을
@@ -153,6 +163,14 @@ fetch(url + '?t=' + Date.now(), {cache:'reload'})
 - `google-site-verification` TXT 레코드 (구글 서치콘솔) — **지우지 마세요**
 - `index.html` `<head>` 의 `naver-site-verification` 메타 태그 (네이버 서치어드바이저, 2026-09-28) — **지우지 마세요.**
   네이버는 DNS 가 아니라 이 태그로 사이트 주인을 확인합니다. 지우면 네이버 웹마스터도구 권한이 풀립니다.
+- `index.html` 회사 정보(JSON-LD `Organization`)의 `logo` · `sameAs` (2026-11-06).
+  `logo` 는 검색 결과에 쓰이는 회사 로고(`assets/logo-square.png`), `sameAs` 는 네이버 '연관 채널'로 읽히는
+  공식 채널 목록입니다(지금은 편입로그 App Store · Google Play, 사이트 상세 페이지와 같은 주소).
+  **스토어에 올라간 앱이 늘면 그 주소도 `sameAs` 에 넣으세요.** 스토어에 없는 앱의 웹 주소는 넣지 않습니다.
+  네이버 AI 브리핑의 그림은 네이버가 고르고 기준이 비공개라, 이 두 칸은 우리 로고가 뽑힐 후보가 되게 하는 것까지입니다.
+- 모든 페이지의 `<link rel="canonical">` 과 `og:url` (2026-11-06). 홈은 `https://logify.co.kr/` 입니다.
+  사이트 안 링크 40여 개가 `index.html` 을 가리켜서 `/` 와 `/index.html` 이 둘 다 열리는데, 홈 canonical 이
+  둘을 한 페이지로 묶어 줍니다. **지우지 마세요.** 새 페이지에도 같은 두 줄을 넣습니다.
 - 저장소 루트 `CNAME` 파일 (내용 `logify.co.kr`) — GitHub 이 자동 생성. **지우지 마세요.** 지우면 커스텀 도메인이 풀립니다.
 - HTTPS: Pages `https_enforced=true`. 인증서는 GitHub 이 무료 발급 · 자동 갱신 (손댈 것 없음)
 
