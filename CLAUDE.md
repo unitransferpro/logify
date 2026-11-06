@@ -62,6 +62,13 @@ assets/
                 https://logify.co.kr/assets/logify-email-white-200.png 주소로 불러갑니다. **지우거나 이름을 바꾸면
                 회사 계정이 보내는 모든 메일의 로고가 깨집니다.** 바꿀 땐 새 이름으로 올리고 관리 콘솔 주소도 같이 고치세요.
                 바닥글 이미지는 높이 100px 이하여야 해서 400px 버전이 아니라 이 200px 버전입니다
+  logify-email-anim.gif  회사 메일 바닥글용 움직이는 로고 200x96 (2026-11-07). 위 PNG 와 같은 이유로 **지우거나 이름을
+                바꾸지 마세요**(바닥글이 PNG·GIF 중 어느 쪽을 쓰는지는 관리 콘솔 Gmail > Compliance > Append footer 에서 확인).
+                5초마다 i 의 점이 튀고, 닿을 때마다 전체 검정 ↔ ify 파랑이 번갈아 번집니다(번지는 순서·속도는 LOGO_INTRO 값).
+                다시 만들 때 지킬 것 두 가지:
+                - **첫 프레임은 반드시 공식 로고(파란 ify)**. Windows Outlook 은 GIF 를 재생하지 않고 첫 프레임만 보여줍니다.
+                - **팔레트에 흰색·잉크·코발트를 정확한 값으로** 넣고 색 맞추기는 직접 계산하세요. Pillow 기본 변환은 근사 검색이라
+                  바탕을 #fcfcfc 로 밀어서, 흰 메일 본문 위에 연한 상자가 비칩니다
   apps/         고객지원 카드의 앱 아이콘 <슬러그>.png (128px 꽉 찬 정사각형, 모서리는 CSS 가 둥글립니다).
                 아이콘이 없는 앱은 support.html 에서 .ic-letter 글자 타일로 둡니다(지금 meetlog)
   brand/        logo-reveal.mp4 — 홈 Let's build 띠 로고 애니메이션의 원본 영상. 사이트는 이제 이 파일을
